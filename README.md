@@ -4,7 +4,7 @@ Ruby SDK for [Evervault](https://evervault.com)
 
 ## Getting Started
 
-#### Prerequisites
+### Prerequisites
 
 To get started with the Evervault Python SDK, you will need to have created a team on the evervault dashboard.
 
