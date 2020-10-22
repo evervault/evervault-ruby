@@ -1,13 +1,19 @@
 # Evervault
-[![Actions Status](https://github.com/evervault/evervault-ruby/workflows/run-tests/badge.svg)](https://github.com/evervault/evervault-ruby/actions)
+<p align="center">
+  <img src="res/logo512.png">
+  <p>Ruby SDK for <a href="https://evervault.com">Evervault</a></p>
+</p>
 
-Ruby SDK for [Evervault](https://evervault.com)
+<p align="center">
+  <a href="https://github.com/actions/evervault/actions?query=workflow%3Arun-tests"><img alt="Evervault unit tests status" src="https://github.com/actions/evervault/workflows/run-tests/badge.svg"></a>
+</p>
+
 
 ## Getting Started
 
 ### Prerequisites
 
-To get started with the Evervault Python SDK, you will need to have created a team on the evervault dashboard.
+To get started with the Evervault Ruby SDK, you will need to have created a team on the evervault dashboard.
 
 We are currently in invite-only early access. You can apply for early access [here](https://evervault.com).
 
