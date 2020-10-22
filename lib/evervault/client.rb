@@ -1,11 +1,9 @@
 require_relative "http/request"
 require_relative "crypto/client"
+require_relative "models/cage_list"
 
 module Evervault
   class Client
-    def self.setup
-      new.tap { |instance| yield(instance) if block_given? }
-    end
 
     attr_accessor :api_key, :base_url, :cage_run_url, :request_timeout
     def initialize(
@@ -41,7 +39,12 @@ module Evervault
     end
 
     def cages
-      @request.get("cages")
+      cage_list.to_hash
+    end
+
+    def cage_list
+      cages = @request.get("cages")
+      @cage_list ||= Evervault::Models::CageList.new(cages: cages["cages"], request: @request)
     end
   end
 end

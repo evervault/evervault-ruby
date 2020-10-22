@@ -22,6 +22,10 @@ module Evervault
       client.cages
     end
 
+    def cage_list
+      client.cage_list
+    end
+
     private def client
       if api_key.nil?
         raise Evervault::Errors::AuthenticationError.new(
