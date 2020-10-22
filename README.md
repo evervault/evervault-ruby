@@ -77,7 +77,7 @@ Evervault.run(cage_name = String, data = Hash)
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| cageName | str | Name of the cage to be run |
+| cageName | String | Name of the cage to be run |
 | data | Hash | Payload for the cage |
 
 ### evervault.encryptAndRun
@@ -90,7 +90,7 @@ Evervault.encrypt_and_run(cage_name = String, data = Hash)
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| cageName | str | Name of the cage to be run |
+| cageName | String | Name of the cage to be run |
 | data | dict | Data to be encrypted |
 
 ### evervault.cages
