@@ -1,7 +1,7 @@
 # Evervault
 <p align="center">
   <img src="res/logo.svg">
-  <p>Ruby SDK for <a href="https://evervault.com">Evervault</a></p>
+  Ruby SDK for <a href="https://evervault.com">Evervault</a>
 </p>
 
 <p align="center">
