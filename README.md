@@ -1,11 +1,11 @@
 # Evervault
 <p align="center">
-  <img src="res/logo512.png">
+  <img src="res/logo.svg">
   <p>Ruby SDK for <a href="https://evervault.com">Evervault</a></p>
 </p>
 
 <p align="center">
-  <a href="https://github.com/actions/evervault/actions?query=workflow%3Arun-tests"><img alt="Evervault unit tests status" src="https://github.com/actions/evervault/workflows/run-tests/badge.svg"></a>
+  <a href="https://github.com/evervault/evervault-ruby/actions?query=workflow%3A%22Run+test+matrix%22"><img alt="Evervault unit tests status" src="https://github.com/actions/evervault/workflows/run-tests/badge.svg"></a>
 </p>
 
 
