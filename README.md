@@ -61,7 +61,7 @@ result = evervault.encrypt_and_run(<CAGE-NAME>, { hello: 'World!' })
 
 ## API Reference
 
-### evervault.encrypt
+### Evervault.encrypt
 
 Encrypt lets you encrypt data for use in any of your evervault cages. You can use it to store encrypted data to be used in a cage at another time.
 
@@ -73,7 +73,7 @@ Evervault.encrypt(data = Hash | String)
 | --------- | ---- | ----------- |
 | data | Hash or String | Data to be encrypted |
 
-### evervault.run
+### Evervault.run
 
 Run lets you invoke your evervault cages with a given payload.
 
@@ -86,7 +86,7 @@ Evervault.run(cage_name = String, data = Hash)
 | cageName | String | Name of the cage to be run |
 | data | Hash | Payload for the cage |
 
-### evervault.encryptAndRun
+### Evervault.encrypt_and_run
 
 Encrypt your data and use it as the payload to invoke the cage.
 
@@ -99,7 +99,7 @@ Evervault.encrypt_and_run(cage_name = String, data = Hash)
 | cageName | String | Name of the cage to be run |
 | data | dict | Data to be encrypted |
 
-### evervault.cages
+### Evervault.cages
 
 Return a hash of your team's Cage objects in hash format, with cage-name as keys
 
@@ -127,7 +127,7 @@ Evervault.cages
    @uuid="55986772-4db7-4695-ba44-1b807290ddea">}
 ```
 
-### evervault.cage_list
+### Evervault.cage_list
 
 Return a `CageList` object, containing a list of your team's cages
 
