@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/evervault/evervault-ruby/actions?query=workflow%3A%22Run+test+matrix%22"><img alt="Evervault unit tests status" src="https://github.com/actions/evervault/workflows/run-tests/badge.svg"></a>
+  <a href="https://github.com/evervault/evervault-ruby/actions?query=workflow%3Aevervault-unit-tests"><img alt="Evervault unit tests status" src="https://github.com/evervault/evervault-ruby/workflows/evervault-unit-tests/badge.svg"></a>
 </p>
 
 
