@@ -1,7 +1,6 @@
 # Evervault
 <p align="center">
   <img src="res/logo.svg">
-  Ruby SDK for <a href="https://evervault.com">Evervault</a>
 </p>
 
 <p align="center">
@@ -10,7 +9,7 @@
 
 
 ## Getting Started
-
+Ruby SDK for [Evervault](https://evervault.com)
 ### Prerequisites
 
 To get started with the Evervault Ruby SDK, you will need to have created a team on the evervault dashboard.
