@@ -1,8 +1,5 @@
 name: evervault-unit-tests
-on:
-  push:
-    branches:
-      - "**"
+on: [push]
 
 jobs:
   test:
