@@ -1,4 +1,5 @@
 # Evervault
+[![Actions Status](https://github.com/evervault/evervault-ruby/workflows/run-tests/badge.svg)](https://github.com/evervault/evervault-ruby/actions)
 
 Ruby SDK for [Evervault](https://evervault.com)
 
