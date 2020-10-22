@@ -14,19 +14,19 @@ module Evervault
       end
 
       def get(path, params = nil)
-        self.execute(:get, self.build_url(path), params)
+        execute(:get, build_url(path), params)
       end
 
       def put(path, params)
-        self.execute(:put, self.build_url(path), params)
+        execute(:put, build_url(path), params)
       end
 
       def delete(path, params)
-        self.execute(:delete, self.build_url(path), params)
+        execute(:delete, build_url(path), params)
       end
 
       def post(path, params, cage_run: false)
-        self.execute(:post, self.build_url(path, cage_run), params)
+        execute(:post, build_url(path, cage_run), params)
       end
 
       private def build_url(path, cage_run = false)
@@ -38,7 +38,9 @@ module Evervault
         req =
           Typhoeus::Request.new(
             url,
-            method: method, params: params, headers: self.build_headers
+            method: method, 
+            params: params, 
+            headers: build_headers
           )
         req.on_complete do |response|
           if response.success?
