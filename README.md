@@ -27,7 +27,7 @@ Or install it yourself as:
      gem install evervault
 ```
 
-#### Setup
+## Setup
 
 Evervault can be initialized as a singleton throughout the lifecycle of your application.
 ```ruby
@@ -55,7 +55,7 @@ result = evervault.encrypt_and_run(<CAGE-NAME>, { hello: 'World!' })
 
 ## API Reference
 
-#### evervault.encrypt
+### evervault.encrypt
 
 Encrypt lets you encrypt data for use in any of your evervault cages. You can use it to store encrypted data to be used in a cage at another time.
 
@@ -67,7 +67,7 @@ Evervault.encrypt(data = Hash | String)
 | --------- | ---- | ----------- |
 | data | Hash or String | Data to be encrypted |
 
-#### evervault.run
+### evervault.run
 
 Run lets you invoke your evervault cages with a given payload.
 
@@ -80,7 +80,7 @@ evervault.run(cage_name = String, data = Hash)
 | cageName | str | Name of the cage to be run |
 | data | Hash | Payload for the cage |
 
-#### evervault.encryptAndRun
+### evervault.encryptAndRun
 
 Encrypt your data and use it as the payload to invoke the cage.
 
@@ -93,7 +93,7 @@ Evervault.encrypt_and_run(cage_name = String, data = Hash)
 | cageName | str | Name of the cage to be run |
 | data | dict | Data to be encrypted |
 
-#### evervault.cages
+### evervault.cages
 
 Return a hash of your team's Cage objects in hash format, with cage-name as keys
 
@@ -121,7 +121,7 @@ Evervault.cages
    @uuid="55986772-4db7-4695-ba44-1b807290ddea">}
 ```
 
-#### evervault.cage_list
+### evervault.cage_list
 
 Return a `CageList` object, containing a list of your team's cages
 
@@ -159,7 +159,7 @@ Evervault.cage_list
     @uuid="a30295e6-91fc-4d1d-837c-ac4c9b87d02d">]>
 ```
 
-##### CageList.to_hash
+#### CageList.to_hash
 
 Converts a list of cages to a hash with keys of CageName => Cage Model
 
@@ -202,7 +202,7 @@ Evervault.cage_list.to_hash
    @uuid="a30295e6-91fc-4d1d-837c-ac4c9b87d02d">}
 ```
 
-#### Evervault::Models::Cage.run
+### Evervault::Models::Cage.run
 
 Each Cage model exposes a `run` method, which allows you to run that particular cage.
 
@@ -212,6 +212,10 @@ cage = Evervault.cage_list.cages[0]
 cage.run({'name': 'testing'})
 => {"result"=>{"message"=>"Hello, world!", "details"=>"Please send an encrypted `name` parameter to show cage decryption in action"}, "runId"=>"5428800061ff"}
 ```
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| data | Hash | Payload for the cage |
 
 ## Development
 
