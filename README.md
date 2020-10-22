@@ -202,7 +202,7 @@ Evervault.cage_list.to_hash
    @uuid="a30295e6-91fc-4d1d-837c-ac4c9b87d02d">}
 ```
 
-### Evervault::Models::Cage.run
+### Cage.run
 
 Each Cage model exposes a `run` method, which allows you to run that particular cage.
 
