@@ -1,5 +1,4 @@
 require "openssl"
-require "pry"
 
 module Evervault
   module Crypto
