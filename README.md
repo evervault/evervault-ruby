@@ -72,7 +72,7 @@ Evervault.encrypt(data = Hash | String)
 Run lets you invoke your evervault cages with a given payload.
 
 ```ruby
-evervault.run(cage_name = String, data = Hash)
+Evervault.run(cage_name = String, data = Hash)
 ```
 
 | Parameter | Type | Description |
