@@ -10,10 +10,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - run: zip -r evervault-ruby-artifact-${{ github.run_id }}-${{ github.run_number }}.zip .
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: evervault-ruby-artifact
+          path: evervault-ruby-artifact-${{ github.run_id }}-${{ github.run_number }}.zip
       - name: Release Gem
-        uses: cadwallion/publish-rubygems-action@master
+        run: |
+          unzip evervault-ruby-artifact/evervault-ruby-artifact-${{ github.run_id }}-${{ github.run_number }}.zip
+          bash ./scripts/release.sh
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
-          RELEASE_COMMAND: bundler -v; bundle exec rake release
