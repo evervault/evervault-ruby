@@ -15,4 +15,4 @@ echo "Installing dependencies..."
 bundle install
 
 echo "Running gem release task..."
-gem release evervault -k ${RUBYGEMS_API_KEY}
+gem release evervault -k rubygems
