@@ -17,6 +17,10 @@ jobs:
         with:
           name: evervault-ruby-artifact
           path: evervault-ruby-artifact-${{ github.run_id }}-${{ github.run_number }}.zip
+      - name: Download artifact
+        uses: actions/download-artifact@v1
+        with:
+          name: evervault-ruby-artifact
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
