@@ -17,6 +17,9 @@ jobs:
         with:
           name: evervault-ruby-artifact
           path: evervault-ruby-artifact-${{ github.run_id }}-${{ github.run_number }}.zip
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
       - name: Release Gem
         run: |
           unzip evervault-ruby-artifact/evervault-ruby-artifact-${{ github.run_id }}-${{ github.run_number }}.zip
