@@ -15,4 +15,4 @@ echo "Installing dependencies..."
 bundle install
 
 echo "Running gem release task..."
-gem bump -k
+gem release -k
