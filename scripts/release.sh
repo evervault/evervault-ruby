@@ -15,4 +15,4 @@ echo "Installing dependencies..."
 bundle install
 
 echo "Running gem release task..."
-bundle exec rake release
+gem release evervault -k
