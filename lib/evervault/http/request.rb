@@ -35,6 +35,7 @@ module Evervault
       end
 
       def execute(method, url, params)
+        Typhoeus::Config.user_agent = "evervault-ruby/#{VERSION}"
         req =
           Typhoeus::Request.new(
             url,
@@ -57,7 +58,6 @@ module Evervault
 
       private def build_headers
         {
-          "User-Agent": "evervault-ruby/#{VERSION}",
           "AcceptEncoding": "gzip, deflate",
           "Accept": "application/json",
           "Content-Type": "application/json",
