@@ -26,8 +26,8 @@ jobs:
     needs: test
     
     steps:
-      - uses: actions/checkout@v1
-
+      - uses: actions/checkout@v2
+      - run: bundle install
       - name: Release Gem
         if: contains(github.ref, 'refs/tags/v')
         uses: cadwallion/publish-rubygems-action@master
