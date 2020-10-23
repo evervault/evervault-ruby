@@ -1,19 +1,38 @@
 name: Publish Gem
 
-on: [push]
-
+on:
+  push:
+    tags:
+      - v*
 
 jobs:
-     
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu, macos]
+        ruby: [2.5, 2.6, 2.7, jruby, jruby-head, truffleruby]
+    runs-on: ${{ matrix.os }}-latest
+    continue-on-error: ${{ endsWith(matrix.ruby, 'head') || matrix.ruby == 'debug' }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+    - run: bundle install
+    - run: bundle exec rake
+
   build:
     runs-on: ubuntu-latest
-
+    needs: test
+    
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
       - name: Release Gem
+        if: contains(github.ref, 'refs/tags/v')
         run: ./scripts/release.sh
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
