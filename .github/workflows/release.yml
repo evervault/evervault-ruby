@@ -28,6 +28,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
       - run: gem install gem-release
       - name: Release Gem
         if: contains(github.ref, 'refs/tags/v')
