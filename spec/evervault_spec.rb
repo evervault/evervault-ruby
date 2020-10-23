@@ -48,7 +48,7 @@ RSpec.describe Evervault do
             "Api-Key"=>"testing",
             "Content-Type"=>"application/json",
             "Expect"=>"",
-            "User-Agent"=>"evervault-ruby/0.1.0"
+            "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}"
            })
            .to_return({ status: status, body: response.to_json }) 
     end
@@ -84,7 +84,7 @@ RSpec.describe Evervault do
           "Api-Key"=>"testing",
           "Content-Type"=>"application/json",
           "Expect"=>"",
-          "User-Agent"=>"evervault-ruby/0.1.0"
+          "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}"
         }).to_return({ status: status, body: response.to_json }) 
     end
 
