@@ -10,24 +10,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: zip -r evervault-ruby-artifact-${{ github.run_id }}-${{ github.run_number }}.zip .
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: evervault-ruby-artifact
-          path: evervault-ruby-artifact-${{ github.run_id }}-${{ github.run_number }}.zip
-      - name: Download artifact
-        uses: actions/download-artifact@v1
-        with:
-          name: evervault-ruby-artifact
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
       - name: Release Gem
-        run: |
-          unzip evervault-ruby-artifact/evervault-ruby-artifact-${{ github.run_id }}-${{ github.run_number }}.zip
-          bash ./scripts/release.sh
+        run: ./scripts/release.sh
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
