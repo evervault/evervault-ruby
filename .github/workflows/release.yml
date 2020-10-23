@@ -24,7 +24,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
-    - name: Publish gem
-      uses: dawidd6/action-publish-gem@v1
+    steps:
+    - uses: dawidd6/action-publish-gem@v1
       with:
         api_key: ${{secrets.RUBYGEMS_API_KEY}}    
