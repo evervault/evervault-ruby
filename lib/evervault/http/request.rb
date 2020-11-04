@@ -1,4 +1,4 @@
-require "typhoeus"
+require "faraday"
 require "json"
 require_relative "../version"
 require_relative "../errors/error_map"
@@ -35,25 +35,12 @@ module Evervault
       end
 
       def execute(method, url, params)
-        Typhoeus::Config.user_agent = "evervault-ruby/#{VERSION}"
-        req =
-          Typhoeus::Request.new(
-            url,
-            method: method, 
-            params: params, 
-            headers: build_headers
-          )
-        req.on_complete do |response|
-          if response.success?
-            return JSON.parse(response.body)
-          else
-            Evervault::Errors::ErrorMap.raise_errors_on_failure(
-              response.code,
-              response.body
-            )
-          end
+        resp = Faraday.send(method, url) do |req|
+            req.body = params.nil? || params.empty? ? nil : params.to_json
+            req.headers = build_headers
         end
-        resp = req.run
+        return JSON.parse(resp.body) if resp.status >= 200 && resp.status <= 300
+        Evervault::Errors::ErrorMap.raise_errors_on_failure(resp.status, resp.body)
       end
 
       private def build_headers
@@ -61,6 +48,7 @@ module Evervault
           "AcceptEncoding": "gzip, deflate",
           "Accept": "application/json",
           "Content-Type": "application/json",
+          "User-Agent": "evervault-ruby/#{VERSION}",
           "Api-Key": @api_key
         }
       end

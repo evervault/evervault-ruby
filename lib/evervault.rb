@@ -6,24 +6,8 @@ module Evervault
   class << self
     attr_accessor :api_key
 
-    def run(cage_name, encrypted_data)
-      client.run(cage_name, encrypted_data)
-    end
-
-    def encrypt_and_run(cage_name, data)
-      client.encrypt_and_run(cage_name, data)
-    end
-
-    def encrypt(data)
-      client.encrypt(data)
-    end
-
-    def cages
-      client.cages
-    end
-
-    def cage_list
-      client.cage_list
+    def method_missing(method, *args, &block)
+      client.send(method, *args, &block)
     end
 
     private def client
