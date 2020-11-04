@@ -13,6 +13,9 @@ RSpec.describe Evervault do
       timeout: 30
     ) 
   end
+  let(:crypto_client) do 
+    Evervault::Crypto::Client.new(request: request) 
+  end
 
   before :each do 
     Evervault.api_key = "testing" 
@@ -41,15 +44,19 @@ RSpec.describe Evervault do
   describe "run" do
     before do 
       allow(Evervault::Http::Request).to receive(:new).and_return(request)
-      stub_request(:post, "https://cage.run/testing-cage?name=testing").with(
-           headers: {
-            "Accept"=>"application/json",
-            "Acceptencoding"=>"gzip, deflate",
-            "Api-Key"=>"testing",
-            "Content-Type"=>"application/json",
-            "Expect"=>"",
-            "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}"
-           })
+      stub_request(:post, "https://cage.run/testing-cage").with(
+        headers: {
+          "Accept"=>"application/json",
+          "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+          "Acceptencoding"=>"gzip, deflate",
+          "Api-Key"=>"testing",
+          "Content-Type"=>"application/json",
+          "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}"
+          },
+          body: {
+            name: "testing"
+          }.to_json
+        )
            .to_return({ status: status, body: response.to_json }) 
     end
 
@@ -59,7 +66,7 @@ RSpec.describe Evervault do
 
       it "makes a post request to the cage run API" do
         Evervault.run("testing-cage", { name: "testing" })
-        assert_requested(:post, "https://cage.run/testing-cage", query: { name: "testing" }, times: 1)
+        assert_requested(:post, "https://cage.run/testing-cage", body: { name: "testing" }, times: 1)
       end
     end
 
@@ -69,7 +76,7 @@ RSpec.describe Evervault do
 
       it "makes a post request to the cage run API and maps the error" do
         expect { Evervault.run("testing-cage", { name: "testing" }) }.to raise_error(Evervault::Errors::BadRequestError)
-        assert_requested(:post, "https://cage.run/testing-cage", query: { name: "testing" }, times: 1)
+        assert_requested(:post, "https://cage.run/testing-cage", body: { name: "testing" }, times: 1)
       end
     end
   end
@@ -77,15 +84,18 @@ RSpec.describe Evervault do
   describe "encrypt_and_run" do
     before do 
       allow(Evervault::Http::Request).to receive(:new).and_return(request)
-      stub_request(:post, /https:\/\/cage\.run\/testing-cage\?name=.*/).with(
+      allow_any_instance_of(Evervault::Crypto::Client).to receive(:encrypt).and_return({ name: "encrypted" })
+      stub_request(:post, "https://cage.run/testing-cage").with(
         headers: {
           "Accept"=>"application/json",
+          "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
           "Acceptencoding"=>"gzip, deflate",
           "Api-Key"=>"testing",
           "Content-Type"=>"application/json",
-          "Expect"=>"",
           "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}"
-        }).to_return({ status: status, body: response.to_json }) 
+        },
+        body: { name: "encrypted" }.to_json
+      ).to_return({ status: status, body: response.to_json }) 
     end
 
     context "success" do
@@ -94,7 +104,7 @@ RSpec.describe Evervault do
 
       it "makes a post request to the cage run API" do
         Evervault.encrypt_and_run("testing-cage", { name: "testing" })
-        assert_requested(:post,  /https:\/\/cage\.run\/testing-cage\?name=.*/, times: 1)
+        assert_requested(:post,  "https://cage.run/testing-cage", times: 1)
       end
     end
 
@@ -104,7 +114,7 @@ RSpec.describe Evervault do
 
       it "makes a post request to the cage run API and maps the error" do
         expect { Evervault.encrypt_and_run("testing-cage", { name: "testing" }) }.to raise_error(Evervault::Errors::BadRequestError)
-        assert_requested(:post,  /https:\/\/cage\.run\/testing-cage\?name=.*/, times: 1)
+        assert_requested(:post,  "https://cage.run/testing-cage", times: 1)
       end
     end
   end
