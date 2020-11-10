@@ -64,7 +64,7 @@ module Evervault
         end
         if options.key?(:version)
           if options[:version].is_a? Integer
-            optional_headers[:"x-version-id"] = options[:version].to_s
+            optional_headers["x-version-id"] = options[:version].to_s
           end
           options.delete(:version)
         end
