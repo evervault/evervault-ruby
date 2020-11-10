@@ -29,13 +29,13 @@ module Evervault
       @crypto_client.encrypt(data)
     end
 
-    def run(cage_name, encrypted_data)
-      @request.post(cage_name, encrypted_data, cage_run: true)
+    def run(cage_name, encrypted_data, options = {})
+      @request.post(cage_name, encrypted_data, options: options, cage_run: true)
     end
 
-    def encrypt_and_run(cage_name, data)
+    def encrypt_and_run(cage_name, data, options = {})
       encrypted_data = encrypt(data)
-      run(cage_name, encrypted_data)
+      run(cage_name, encrypted_data, options)
     end
 
     def cages
