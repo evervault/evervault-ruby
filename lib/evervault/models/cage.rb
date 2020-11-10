@@ -9,8 +9,8 @@ module Evervault
         @request = request
       end
 
-      def run(params)
-        @request.post(self.name, params, cage_run: true)
+      def run(params, options = {})
+        @request.post(self.name, params, options: options, cage_run: true)
       end
 
     end

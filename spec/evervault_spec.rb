@@ -81,6 +81,37 @@ RSpec.describe Evervault do
     end
   end
 
+  describe "run_with_options" do
+    before do
+      allow(Evervault::Http::Request).to receive(:new).and_return(request)
+      stub_request(:post, "https://cage.run/testing-cage").with(
+        headers: {
+          "Accept"=>"application/json",
+          "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+          "Acceptencoding"=>"gzip, deflate",
+          "Api-Key"=>"testing",
+          "Content-Type"=>"application/json",
+          "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}",
+          "x-async"=>"true"
+          },
+          body: {
+            name: "testing"
+          }.to_json
+        )
+           .to_return({ status: status, body: response.to_json })
+    end
+
+    context "success with options" do
+      let(:response) { { "result" =>{"status"=>"queued"} } }
+      let(:status) { 202 }
+
+      it "makes an async cage run request" do
+        Evervault.run("testing-cage", { name: "testing" }, { async: true })
+        assert_requested(:post, "https://cage.run/testing-cage", body: { name: "testing" }, times: 1)
+      end
+    end
+  end
+
   describe "encrypt_and_run" do
     before do 
       allow(Evervault::Http::Request).to receive(:new).and_return(request)

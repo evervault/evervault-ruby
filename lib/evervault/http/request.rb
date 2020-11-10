@@ -25,7 +25,8 @@ module Evervault
         execute(:delete, build_url(path), params)
       end
 
-      def post(path, params, optional_headers: {}, cage_run: false)
+      def post(path, params, options: {}, cage_run: false)
+        optional_headers = build_cage_run_headers(options, cage_run)
         execute(:post, build_url(path, cage_run), params, optional_headers)
       end
 
@@ -51,6 +52,24 @@ module Evervault
           "User-Agent": "evervault-ruby/#{VERSION}",
           "Api-Key": @api_key
         })
+      end
+
+      private def build_cage_run_headers(options, cage_run = false)
+        optional_headers = {}
+        return optional_headers unless cage_run
+        if options.key?(:async)
+          if options[:async] == true
+            optional_headers[:"x-async"] = "true"
+          end
+          options.delete(:async)
+        end
+        if options.key?(:version)
+          if options[:version].is_a? Integer
+            optional_headers[:"x-version-id"] = options[:version].to_s
+          end
+          options.delete(:version)
+        end
+        optional_headers.merge(options)
       end
     end
   end
