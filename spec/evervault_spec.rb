@@ -102,7 +102,7 @@ RSpec.describe Evervault do
     end
 
     context "success with options" do
-      let(:response) { { "result" =>{"status"=>"queued"} } }
+      let(:response) { { "result" =>{ "status" => "queued" } } }
       let(:status) { 202 }
 
       it "makes an async cage run request" do
