@@ -58,7 +58,7 @@ module Evervault
         return optional_headers unless cage_run
         if options.key?(:async)
           if options[:async]
-            optional_headers["x-async"] = true
+            optional_headers["x-async"] = "true"
           end
           options.delete(:async)
         end
