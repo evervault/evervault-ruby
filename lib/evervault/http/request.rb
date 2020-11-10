@@ -43,7 +43,7 @@ module Evervault
         Evervault::Errors::ErrorMap.raise_errors_on_failure(resp.status, resp.body)
       end
 
-      private def build_headers(optional_headers = {})
+      private def build_headers(optional_headers)
         optional_headers.merge({
           "AcceptEncoding": "gzip, deflate",
           "Accept": "application/json",
