@@ -26,8 +26,7 @@ module Evervault
       end
 
       def post(path, params, options: {}, cage_run: false)
-        optional_headers = build_cage_run_headers(options, cage_run)
-        execute(:post, build_url(path, cage_run), params, optional_headers)
+        execute(:post, build_url(path, cage_run), params, build_cage_run_headers(options, cage_run))
       end
 
       private def build_url(path, cage_run = false)
