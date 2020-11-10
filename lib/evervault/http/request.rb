@@ -25,8 +25,8 @@ module Evervault
         execute(:delete, build_url(path), params)
       end
 
-      def post(path, params, cage_run: false)
-        execute(:post, build_url(path, cage_run), params)
+      def post(path, params, optional_headers: {}, cage_run: false)
+        execute(:post, build_url(path, cage_run), params, optional_headers)
       end
 
       private def build_url(path, cage_run = false)
@@ -34,23 +34,23 @@ module Evervault
         "#{@cage_run_url}#{path}"
       end
 
-      def execute(method, url, params)
+      def execute(method, url, params, optional_headers = {})
         resp = Faraday.send(method, url) do |req|
             req.body = params.nil? || params.empty? ? nil : params.to_json
-            req.headers = build_headers
+            req.headers = build_headers(optional_headers)
         end
         return JSON.parse(resp.body) if resp.status >= 200 && resp.status <= 300
         Evervault::Errors::ErrorMap.raise_errors_on_failure(resp.status, resp.body)
       end
 
-      private def build_headers
-        {
+      private def build_headers(optional_headers = {})
+        optional_headers.merge({
           "AcceptEncoding": "gzip, deflate",
           "Accept": "application/json",
           "Content-Type": "application/json",
           "User-Agent": "evervault-ruby/#{VERSION}",
           "Api-Key": @api_key
-        }
+        })
       end
     end
   end
