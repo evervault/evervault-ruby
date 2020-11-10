@@ -12,7 +12,7 @@
 Ruby SDK for [Evervault](https://evervault.com)
 ### Prerequisites
 
-To get started with the Evervault Ruby SDK, you will need to have created a team on the evervault dashboard.
+To get started with the Evervault Ruby SDK, you will need to have created a team on the Evervault dashboard.
 
 We are currently in invite-only early access. You can apply for early access [here](https://evervault.com).
 
@@ -63,7 +63,7 @@ result = evervault.encrypt_and_run(<CAGE-NAME>, { hello: 'World!' })
 
 ### Evervault.encrypt
 
-Encrypt lets you encrypt data for use in any of your evervault cages. You can use it to store encrypted data to be used in a cage at another time.
+Encrypt lets you encrypt data for use in any of your Evervault Cages. You can use it to store encrypted data to be used in a Cage at another time.
 
 ```ruby
 Evervault.encrypt(data = Hash | String)
@@ -75,20 +75,28 @@ Evervault.encrypt(data = Hash | String)
 
 ### Evervault.run
 
-Run lets you invoke your evervault cages with a given payload.
+Run lets you invoke your Evervault Cages with a given payload.
 
 ```ruby
-Evervault.run(cage_name = String, data = Hash)
+Evervault.run(cage_name = String, data = Hash[, options = Hash])
 ```
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| cageName | String | Name of the cage to be run |
-| data | Hash | Payload for the cage |
+| cageName | String | Name of the Cage to be run |
+| data | Hash | Payload for the Cage |
+| options | Hash | [Options for the Cage run](#Cage-Run-Options) |
+
+#### Cage Run Options
+
+| Option | Type | Default | Description |
+| ------ | ---- | ------- | ----------- |
+| `async` | `Boolean` | `false` | Run your Cage in async mode. Async Cage runs will be queued for processing. |
+| `version` | `Integer` | `nil` | Specify the version of your Cage to run. By default, the latest version will be run. |
 
 ### Evervault.encrypt_and_run
 
-Encrypt your data and use it as the payload to invoke the cage.
+Encrypt your data and use it as the payload to invoke the Cage.
 
 ```ruby
 Evervault.encrypt_and_run(cage_name = String, data = Hash)
@@ -96,7 +104,7 @@ Evervault.encrypt_and_run(cage_name = String, data = Hash)
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| cageName | String | Name of the cage to be run |
+| cageName | String | Name of the Cage to be run |
 | data | dict | Data to be encrypted |
 
 ### Evervault.cages
@@ -129,7 +137,7 @@ Evervault.cages
 
 ### Evervault.cage_list
 
-Return a `CageList` object, containing a list of your team's cages
+Return a `CageList` object, containing a list of your team's Cages
 
 ```ruby
 Evervault.cage_list
@@ -167,7 +175,7 @@ Evervault.cage_list
 
 #### CageList.to_hash
 
-Converts a list of cages to a hash with keys of CageName => Cage Model
+Converts a list of Cages to a hash with keys of CageName => Cage Model
 
 ```ruby
 Evervault.cage_list.to_hash
@@ -210,9 +218,9 @@ Evervault.cage_list.to_hash
 
 ### Evervault::Models::Cage.run
 
-Each Cage model exposes a `run` method, which allows you to run that particular cage.
+Each Cage model exposes a `run` method, which allows you to run that particular Cage.
 
-*Note*: this does not encrypt data before running the cage
+*Note*: this does not encrypt data before running the Cage
 ```ruby
 cage = Evervault.cage_list.cages[0]
 cage.run({'name': 'testing'})
@@ -221,7 +229,8 @@ cage.run({'name': 'testing'})
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| data | Hash | Payload for the cage |
+| data | Hash | Payload for the Cage |
+| options | Hash | [Options for the Cage run](#Cage-Run-Options) |
 
 ## Development
 
