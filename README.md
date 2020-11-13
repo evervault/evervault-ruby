@@ -43,7 +43,7 @@ gem install evervault
 
 ## Setup
 
-There are tw ways to make Evervault available for use in your app.
+There are two ways to make Evervault available for use in your app.
 
 #### 1. As a singleton
 
@@ -78,7 +78,7 @@ result = evervault.encrypt_and_run(<CAGE-NAME>, { hello: 'World!' })
 
 ## Reference
 
-At present, there are seven methods available in the Ruby SDK.
+The Evervault Ruby SDK exposes seven methods.
 
 ### Evervault.encrypt
 
