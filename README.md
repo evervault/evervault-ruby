@@ -56,10 +56,10 @@ require "evervault"
 Evervault.api_key = <YOUR-API-KEY>
 
 # Encrypt your data and run a cage
-result = Evervault.encrypt_and_run(<CAGE-NAME>, { hello: 'World!' })
+encrypted_data = Evervault.encrypt({ hello: 'World!' })
 
 # Process the encrypted data in a Cage
-result = Evervault.run(<CAGE-NAME>, encrypted)
+result = Evervault.run(<CAGE-NAME>, encrypted_data)
 ```
 
 #### 2. Manually
