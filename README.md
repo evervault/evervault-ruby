@@ -47,7 +47,7 @@ There are tw ways to make Evervault available for use in your app.
 
 #### 1. As a singleton
 
-The singleton pattern is recommended because eusing your Evervault client prevents additional overhead of loading keys at Cage runtime.
+The singleton pattern is recommended to prevent additional overhead of loading keys at Cage runtime when creating new Clients.
 
 ```ruby
 require "evervault"
