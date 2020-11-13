@@ -1,54 +1,71 @@
-# Evervault
-<p align="center">
-  <img src="res/logo.svg">
-</p>
+[![Evervault](https://evervault.com/evervault.svg)](https://welcome.evervault.com/)
 
-<p align="center">
-  <a href="https://github.com/evervault/evervault-ruby/actions?query=workflow%3Aevervault-unit-tests"><img alt="Evervault unit tests status" src="https://github.com/evervault/evervault-ruby/workflows/evervault-unit-tests/badge.svg"></a>
-</p>
+[![Unit Tests Status](https://github.com/evervault/evervault-ruby/workflows/evervault-unit-tests/badge.svg)](https://github.com/evervault/evervault-ruby/actions?query=workflow%3Aevervault-unit-tests)
 
+# Evervault Ruby SDK
+
+The [Evervault](https://evervault.com) Ruby SDK is a toolkit for encrypting data as it enters your server, and working with Cages.
 
 ## Getting Started
-Ruby SDK for [Evervault](https://evervault.com)
-### Prerequisites
 
-To get started with the Evervault Ruby SDK, you will need to have created a team on the Evervault dashboard.
+Before starting with the Evervault Ruby SDK, you will need to [create an account](https://app.evervault.com/register) and a team.
 
-We are currently in invite-only early access. You can apply for early access [here](https://evervault.com).
+For full installation support, [book time here](https://calendly.com/evervault/cages-onboarding).
+
+## Documentation
+
+See the Evervault [Ruby SDK documentation](https://docs.evervault.com/ruby).
 
 ## Installation
 
-Add this line to your application's Gemfile:
+There are two ways to install the Ruby SDK.
+
+#### 1. With Gemfile
+
+Add this line to your application's `Gemfile`:
 
 ```ruby
 gem 'evervault'
 ```
 
-And then execute:
+Then, run:
+
 ```sh
-     bundle install
+bundle install
 ```
-Or install it yourself as:
+#### 2. By yourself
+
+Just run:
+
 ```sh
-     gem install evervault
+gem install evervault
 ```
 
 ## Setup
 
-Evervault can be initialized as a singleton throughout the lifecycle of your application.
+There are two ways to make Evervault available for use in your app.
+
+#### 1. As a singleton
+
+The singleton pattern is recommended to prevent additional overhead of loading keys at Cage runtime when creating new Clients.
+
 ```ruby
 require "evervault"
 
-# Initialize the client with your team's api key
+# Initialize the client with your team's API key
 Evervault.api_key = <YOUR-API-KEY>
 
 # Encrypt your data and run a cage
-result = Evervault.encrypt_and_run(<CAGE-NAME>, { hello: 'World!' })
+encrypted_data = Evervault.encrypt({ hello: 'World!' })
+
+# Process the encrypted data in a Cage
+result = Evervault.run(<CAGE-NAME>, encrypted_data)
 ```
 
-It's recommended to re-use your Evervault client, to prevent additional overhead of loading keys at runtime, so the singleton pattern should be the go-to pattern for most use-cases.
+#### 2. Manually
 
-However, if you'd prefer to initialize different clients at different times, for example, if you have multiple teams and need to switch context, you can simply create a client:
+You can manually initialize different clients at different times. For example, if you have multiple Evervault teams and need to switch context.
+
 ```ruby
 require "evervault"
 
@@ -59,11 +76,13 @@ evervault = Evervault::Client.new(api_key: <YOUR-API-KEY>)
 result = evervault.encrypt_and_run(<CAGE-NAME>, { hello: 'World!' })
 ```
 
-## API Reference
+## Reference
+
+The Evervault Ruby SDK exposes seven methods.
 
 ### Evervault.encrypt
 
-Encrypt lets you encrypt data for use in any of your Evervault Cages. You can use it to store encrypted data to be used in a Cage at another time.
+`Evervault.encrypt` encrypts data for use in your [Evervault Cages](https://docs.evervault.com/tutorial). To encrypt data on your server, simply pass a `Hash` or `String` into the `Evervault.encrypt` method. Store the encrypted data in your database as normal.
 
 ```ruby
 Evervault.encrypt(data = Hash | String)
@@ -75,7 +94,7 @@ Evervault.encrypt(data = Hash | String)
 
 ### Evervault.run
 
-Run lets you invoke your Evervault Cages with a given payload.
+`Evervault.run` invokes a Cage with a given payload.
 
 ```ruby
 Evervault.run(cage_name = String, data = Hash[, options = Hash])
@@ -220,7 +239,7 @@ Evervault.cage_list.to_hash
 
 Each Cage model exposes a `run` method, which allows you to run that particular Cage.
 
-*Note*: this does not encrypt data before running the Cage
+*Note*: this does not encrypt data before running the Cage.
 ```ruby
 cage = Evervault.cage_list.cages[0]
 cage.run({'name': 'testing'})
@@ -242,6 +261,9 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/evervault/evervault-ruby.
 
+## Feedback
+
+Questions or feedback? [Let us know](mailto:support@evervault.com).
 
 ## License
 
