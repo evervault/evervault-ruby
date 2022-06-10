@@ -1,5 +1,6 @@
 require_relative "../errors/errors"
-require_relative "key"
+require_relative "curves/p256"
+require_relative "../version"
 require "openssl"
 require "base64"
 require "json"
@@ -9,79 +10,86 @@ module Evervault
   module Crypto
     class Client
       attr_reader :request
-      def initialize(request:)
-        @request = request
+      def initialize(request:, curve:)
+        @curve = curve
+        @p256 = Evervault::Crypto::Curves::P256.new()
+        @ev_version = base_64_remove_padding(
+            Base64.strict_encode64(EV_VERSION[curve])
+        )
+        response = request.get("cages/key")
+        key = @curve == 'secp256k1' ? 'ecdhKey' : 'ecdhP256Key'
+        @team_key = response[key]
+        @uncompressed_team_key = response['ecdhP256KeyUncompressed']
       end
 
       def encrypt(data)
         raise Evervault::Errors::UndefinedDataError.new(
           "Data is required for encryption"
-        ) if data.nil? || data.empty?
+        ) if data.nil? || (data.instance_of?(String) && data.empty?)
           
-        if data.instance_of? Hash
-          encrypt_hash(data)
-        elsif encryptable_data?(data)
-          encrypt_string(data)
-        end
+        traverse_and_encrypt(data)
       end
 
-      private def encrypt_string(data)
-        cipher = OpenSSL::Cipher::AES256.new(:GCM).encrypt
+      private def encrypt_string(data_to_encrypt)
+        cipher = OpenSSL::Cipher.new('aes-256-gcm').encrypt
+
+        shared_key = generate_shared_key()
+        cipher.key = shared_key
+
         iv = cipher.random_iv
-        root_key = cipher.random_key
-        cipher.key = root_key
         cipher.iv = iv
-        encrypted_data = cipher.update(data) + cipher.final
-        encrypted_buffer = encrypted_data + cipher.auth_tag
-        encrypted_key =
-          team_key.public_key.public_encrypt(
-            root_key,
-            OpenSSL::PKey::RSA::PKCS1_OAEP_PADDING
-          )
-        data = [encrypted_key, encrypted_buffer, iv].map { |val| Base64.strict_encode64(val) }
-        format(header_type(data), *data)
+
+        encrypted_data = cipher.update(data_to_encrypt.to_s) + cipher.final + cipher.auth_tag
+
+        ephemeral_key_compressed_string = @ephemeral_public_key.to_octet_string(:compressed)
+
+        format(header_type(data_to_encrypt), Base64.strict_encode64(iv), Base64.strict_encode64(ephemeral_key_compressed_string), Base64.strict_encode64(encrypted_data))
       end
 
-      private def encrypt_hash(data)
+      private def traverse_and_encrypt(data)
         if encryptable_data?(data)
           return encrypt_string(data)
         elsif data.instance_of?(Hash)
           encrypted_data = {}
-          data.each { |key, value| encrypted_data[key] = encrypt_hash(value) }
+          data.each { |key, value| encrypted_data[key] = traverse_and_encrypt(value) }
+          return encrypted_data
+        elsif data.instance_of?(Array)
+          encrypted_data = data.map { |value| traverse_and_encrypt(value) }
           return encrypted_data
         end
         data
       end
 
       private def encryptable_data?(data)
-        data.instance_of?(String) || data.instance_of?(Array) ||
-          [true, false].include?(data) || data.instance_of?(Integer) ||
-          data.instance_of?(Float)
+        data.instance_of?(String) || [true, false].include?(data) ||
+        data.instance_of?(Integer) || data.instance_of?(Float)
       end
 
-      private def team_key
-        @team_key ||= Key.new(public_key: @request.get("cages/key")["key"])
+      private def generate_shared_key()
+        ec = OpenSSL::PKey::EC.new(@curve)
+        ec.generate_key
+        @ephemeral_public_key = ec.public_key
+
+        decoded_team_key = Base64.decode64(@team_key)
+        group_for_team_key = OpenSSL::PKey::EC::Group.new(@curve)
+        group_for_team_key.point_conversion_form=:compressed
+        team_key_point = OpenSSL::PKey::EC::Point.new(group_for_team_key, decoded_team_key)
+
+        shared_key = ec.dh_compute_key(team_key_point)
+
+        shared_key
       end
 
-      private def format(header, encrypted_key, encrypted_data, iv)
-        header =
-          utf8_to_base_64_url(
-            { iss: "evervault", version: 1, datatype: header }.to_json
-          )
-        payload =
-          utf8_to_base_64_url(
-            {
-              cageData: encrypted_key,
-              keyIv: iv,
-              sharedEncryptedData: encrypted_data
-            }.to_json
-          )
-        "#{header}.#{payload}.#{SecureRandom.uuid}"
+      private def format(datatype, iv, team_key, encrypted_data)
+        "ev:#{@ev_version}#{
+          datatype != 'string' ? ':' + datatype : ''
+        }:#{base_64_remove_padding(iv)}:#{base_64_remove_padding(
+          team_key
+        )}:#{base_64_remove_padding(encrypted_data)}:$"
       end
 
-      private def utf8_to_base_64_url(data)
-        b64_string = Base64.strict_encode64(data)
-        b64_string.gsub("+", "-").gsub("/", "_")
+      private def base_64_remove_padding(str)
+        str.gsub(/={1,2}$/, '');
       end
 
       private def header_type(data)

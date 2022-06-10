@@ -10,11 +10,13 @@ module Evervault
       api_key:,
       base_url: "https://api.evervault.com/",
       cage_run_url: "https://cage.run/",
-      request_timeout: 30
+      request_timeout: 30,
+      curve: 'secp256k1'
     )
       @api_key = api_key
       @base_url = base_url
       @cage_run_url = cage_run_url
+      @curve = curve
       @request =
         Evervault::Http::Request.new(
           api_key: api_key,
@@ -22,7 +24,7 @@ module Evervault
           base_url: base_url,
           cage_run_url: cage_run_url
         )
-      @crypto_client = Evervault::Crypto::Client.new(request: @request)
+      @crypto_client = Evervault::Crypto::Client.new(request: @request, curve: @curve)
     end
 
     def encrypt(data)
