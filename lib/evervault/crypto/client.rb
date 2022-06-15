@@ -19,7 +19,6 @@ module Evervault
         response = request.get("cages/key")
         key = @curve == 'secp256k1' ? 'ecdhKey' : 'ecdhP256Key'
         @team_key = response[key]
-        @uncompressed_team_key = response['ecdhP256KeyUncompressed']
       end
 
       def encrypt(data)
@@ -38,6 +37,10 @@ module Evervault
 
         iv = cipher.random_iv
         cipher.iv = iv
+
+        if (@curve == 'prime256v1')
+          cipher.auth_data = Base64.strict_decode64(@team_key)
+        end
 
         encrypted_data = cipher.update(data_to_encrypt.to_s) + cipher.final + cipher.auth_tag
 
@@ -76,6 +79,15 @@ module Evervault
         team_key_point = OpenSSL::PKey::EC::Point.new(group_for_team_key, decoded_team_key)
 
         shared_key = ec.dh_compute_key(team_key_point)
+
+        if @curve == 'prime256v1'
+          # Perform KDF
+          encoded_ephemeral_key = @p256.encode(decompressed_key: @ephemeral_public_key.to_bn(:uncompressed).to_s(16)).to_der
+          hash_input = shared_key + [00, 00, 00, 01].pack('C*') + encoded_ephemeral_key
+          hash = OpenSSL::Digest::SHA256.new()
+          digest = hash.digest(hash_input)
+          return digest
+        end  
 
         shared_key
       end
