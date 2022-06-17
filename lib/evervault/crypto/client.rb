@@ -73,7 +73,7 @@ module Evervault
         ec.generate_key
         @ephemeral_public_key = ec.public_key
 
-        decoded_team_key = Base64.strict_decode64(@team_key)
+        decoded_team_key = OpenSSL::BN.new(Base64.strict_decode64(@team_key), 2)
         group_for_team_key = OpenSSL::PKey::EC::Group.new(@curve)
         team_key_point = OpenSSL::PKey::EC::Point.new(group_for_team_key, decoded_team_key)
 
