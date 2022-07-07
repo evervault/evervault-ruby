@@ -23,5 +23,11 @@ module Evervault
     class InvalidPublicKeyError < EvervaultError; end
 
     class UnexpectedError < EvervaultError; end
+
+    class CertDownloadError < EvervaultError; end
+
+    class UnsupportedEncryptType < EvervaultError; end
+
+    class ForbiddenIPError < EvervaultError; end
   end
 end

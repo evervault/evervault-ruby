@@ -9,14 +9,14 @@ require "securerandom"
 module Evervault
   module Crypto
     class Client
-      attr_reader :request
-      def initialize(request:, curve:)
+      attr_reader :request_handler
+      def initialize(request_handler:, curve:)
         @curve = curve
         @p256 = Evervault::Crypto::Curves::P256.new()
         @ev_version = base_64_remove_padding(
             Base64.strict_encode64(EV_VERSION[curve])
         )
-        response = request.get("cages/key")
+        response = request_handler.get("cages/key")
         key = @curve == 'secp256k1' ? 'ecdhKey' : 'ecdhP256Key'
         @team_key = response[key]
       end
@@ -25,6 +25,10 @@ module Evervault
         raise Evervault::Errors::UndefinedDataError.new(
           "Data is required for encryption"
         ) if data.nil? || (data.instance_of?(String) && data.empty?)
+
+        raise Evervault::Errors::UnsupportedEncryptType.new(
+          "Encryption is not supported for #{data.class}"
+        ) if !(encryptable_data?(data) || data.instance_of?(Hash) || data.instance_of?(Array))
           
         traverse_and_encrypt(data)
       end
@@ -59,6 +63,10 @@ module Evervault
         elsif data.instance_of?(Array)
           encrypted_data = data.map { |value| traverse_and_encrypt(value) }
           return encrypted_data
+        else
+          raise Evervault::Errors::UnsupportedEncryptType.new(
+            "Encryption is not supported for #{data.class}"
+          )
         end
         data
       end
