@@ -2,19 +2,17 @@ require_relative "spec_helper"
 require "webmock"
 
 RSpec.describe Evervault do
-  let(:key_pair) { OpenSSL::PKey::RSA.generate(1024) }
-  let(:public_key) { key_pair.public_key }
-  let(:private_key) { key_pair.private_key }
+  let(:public_key) { "Ax1NYOSqswFgsRoLFTac7eOvRu7h3GuLmUPKlHpOqsFA" }
   let(:request) do 
     Evervault::Http::Request.new(
       api_key: "testing", 
-      base_url: "https://api.evervault.com", 
+      base_url: "https://api.evervault.com/", 
       cage_run_url: "https://cage.run/", 
       timeout: 30
     ) 
   end
   let(:crypto_client) do 
-    Evervault::Crypto::Client.new(request: request) 
+    Evervault::Crypto::Client.new(request: request, curve: 'secp256k1') 
   end
 
   before :each do 
@@ -24,7 +22,7 @@ RSpec.describe Evervault do
   describe "encrypt" do
 
     before do
-      allow(request).to receive(:get).with("cages/key").and_return({ "key" => public_key.to_s })
+      allow(request).to receive(:get).with("cages/key").and_return({ 'ecdhKey' => public_key })
       allow(Evervault::Http::Request).to receive(:new).and_return(request)
     end
 
