@@ -76,7 +76,7 @@ Evervault.encrypt(data = String | Number | Boolean | Hash | Array)
 
 ### Evervault.relay
 
-`Evervault.relay` specifies which domains should be proxied through outbound relay. See [Outbound Relay](/concepts/relay/outbound-interception) to learn more.  
+`Evervault.relay` specifies which domains should be proxied through outbound relay. See [Outbound Relay](https://docs.evervault.com/concepts/relay/outbound-interception) to learn more.  
 
 ```ruby
 Evervault.relay(decryption_domains = Array)
