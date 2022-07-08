@@ -60,7 +60,7 @@ result = Evervault.run(<CAGE-NAME>, encrypted_data)
 
 ## Reference
 
-The Evervault Ruby SDK exposes seven methods.
+The Evervault Ruby SDK exposes eight methods.
 
 ### Evervault.encrypt
 
