@@ -60,7 +60,7 @@ result = Evervault.run(<CAGE-NAME>, encrypted_data)
 
 ## Reference
 
-The Evervault Ruby SDK exposes seven methods.
+The Evervault Ruby SDK exposes eight methods.
 
 ### Evervault.encrypt
 
@@ -73,6 +73,18 @@ Evervault.encrypt(data = String | Number | Boolean | Hash | Array)
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | data | `String`, `Number`, `Boolean`, `Hash`, `Array` | Data to be encrypted |
+
+### Evervault.relay
+
+`Evervault.relay` specifies which domains should be proxied through outbound relay. See [Outbound Relay](https://docs.evervault.com/concepts/relay/outbound-interception) to learn more.  
+
+```ruby
+Evervault.relay(decryption_domains = Array)
+```
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| decryption_domains | `Array` | Requests sent to any of the domains listed will be proxied through outbound relay |
 
 ### Evervault.run
 
