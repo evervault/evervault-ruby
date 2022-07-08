@@ -64,7 +64,7 @@ The Evervault Ruby SDK exposes seven methods.
 
 ### Evervault.encrypt
 
-`Evervault.encrypt` encrypts data for use in your [Evervault Cages](https://docs.evervault.com/tutorial). To encrypt data on your server, simply pass a Ruby data type into the `Evervault.encrypt` method. Store the encrypted data in your database as normal.
+`Evervault.encrypt` encrypts data for use in your [Evervault Cages](https://docs.evervault.com/tutorial). To encrypt data on your server, simply pass a supported value into the `Evervault.encrypt` method. Store the encrypted data in your database as normal.
 
 ```ruby
 Evervault.encrypt(data = String | Number | Boolean | Hash | Array)
