@@ -73,7 +73,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
 
   describe "encrypt" do
     before do
-      allow(request_handler).to receive(:get).with("cages/key").and_return({ "ecdhKey" => public_key })
+      allow(request_handler).to receive(:get).with("cages/key").and_return({ "ecdhKey" => public_key, "ecdhP256Key" => public_key })
       allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request_handler)
 
       stub_request(:get, "https://ca.evervault.com/").
