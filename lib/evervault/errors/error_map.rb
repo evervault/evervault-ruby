@@ -3,7 +3,7 @@ require_relative "errors"
 module Evervault
   module Errors
     class ErrorMap
-      def self.raise_errors_on_failure(status_code, body)
+      def self.raise_errors_on_failure(status_code, body, headers)
         return if status_code < 400
         case status_code
         when 404
@@ -13,7 +13,11 @@ module Evervault
         when 401
           raise AuthenticationError.new("Unauthorized")
         when 403
-          raise AuthenticationError.new("Forbidden")
+          if (headers.include? "x-evervault-error-code") && (headers["x-evervault-error-code"] == "forbidden-ip-error")
+            raise ForbiddenIPError.new("IP is not present in Cage whitelist")
+          else
+            raise AuthenticationError.new("Forbidden")
+          end
         when 500
           raise ServerError.new("Server Error")
         when 502
