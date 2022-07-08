@@ -4,7 +4,7 @@
 
 # Evervault Ruby SDK
 
-The [Evervault](https://evervault.com) Ruby SDK is a toolkit for encrypting data as it enters your server, working with Cages, and proxying your outbound api requests to specific domains through [Outbound Relay](https://docs.evervault.com/concepts/relay/outbound-interception) to allow them to be decrypted before reaching their target.
+The [Evervault](https://evervault.com) Ruby SDK is a toolkit for encrypting data as it enters your server, working with Cages, and proxying your outbound API requests to specific domains through [Outbound Relay](https://docs.evervault.com/concepts/relay/outbound-interception) to allow them to be decrypted before reaching their target.
 
 ## Getting Started
 
