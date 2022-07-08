@@ -4,7 +4,7 @@
 
 # Evervault Ruby SDK
 
-The [Evervault](https://evervault.com) Ruby SDK is a toolkit for encrypting data as it enters your server, and working with Cages.
+The [Evervault](https://evervault.com) Ruby SDK is a toolkit for encrypting data as it enters your server, working with Cages, and proxying your outbound api requests to specific domains through [Outbound Relay](https://docs.evervault.com/concepts/relay/outbound-interception) to allow them to be decrypted before reaching their target.
 
 ## Getting Started
 
@@ -43,11 +43,7 @@ gem install evervault
 
 ## Setup
 
-There are two ways to make Evervault available for use in your app.
-
-#### 1. As a singleton
-
-The singleton pattern is recommended to prevent additional overhead of loading keys at Cage runtime when creating new Clients.
+To make Evervault available for use in your app:
 
 ```ruby
 require "evervault"
@@ -62,35 +58,21 @@ encrypted_data = Evervault.encrypt({ hello: 'World!' })
 result = Evervault.run(<CAGE-NAME>, encrypted_data)
 ```
 
-#### 2. Manually
-
-You can manually initialize different clients at different times. For example, if you have multiple Evervault teams and need to switch context.
-
-```ruby
-require "evervault"
-
-# Initialize the client with your team's api key
-evervault = Evervault::Client.new(api_key: <YOUR-API-KEY>)
-
-# Encrypt your data and run a cage
-result = evervault.encrypt_and_run(<CAGE-NAME>, { hello: 'World!' })
-```
-
 ## Reference
 
 The Evervault Ruby SDK exposes seven methods.
 
 ### Evervault.encrypt
 
-`Evervault.encrypt` encrypts data for use in your [Evervault Cages](https://docs.evervault.com/tutorial). To encrypt data on your server, simply pass a `Hash` or `String` into the `Evervault.encrypt` method. Store the encrypted data in your database as normal.
+`Evervault.encrypt` encrypts data for use in your [Evervault Cages](https://docs.evervault.com/tutorial). To encrypt data on your server, simply pass a Ruby data type into the `Evervault.encrypt` method. Store the encrypted data in your database as normal.
 
 ```ruby
-Evervault.encrypt(data = Hash | String)
+Evervault.encrypt(data = String | Number | Boolean | Hash | Array)
 ```
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| data | Hash or String | Data to be encrypted |
+| data | `String`, `Number`, `Boolean`, `Hash`, `Array` | Data to be encrypted |
 
 ### Evervault.run
 
