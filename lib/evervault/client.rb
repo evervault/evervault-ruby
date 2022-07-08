@@ -15,8 +15,7 @@ module Evervault
       relay_url: "https://relay.evervault.com:8443",
       ca_host: "https://ca.evervault.com",
       request_timeout: 30,
-      retry: false,
-      curve: 'secp256k1'
+      curve: 'secp256r1'
     )
       @request = Evervault::Http::Request.new(timeout: request_timeout, api_key: api_key)
       @intercept = Evervault::Http::RequestIntercept.new(
