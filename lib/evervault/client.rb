@@ -48,5 +48,9 @@ module Evervault
       cages = @request.get("cages")
       @cage_list ||= Evervault::Models::CageList.new(cages: cages["cages"], request: @request)
     end
+
+    def create_run_token(cage_name, data)
+      @request.post("v2/functions/#{cage_name}/run-token", data)
+    end
   end
 end
