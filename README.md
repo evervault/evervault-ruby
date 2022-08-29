@@ -96,7 +96,7 @@ Evervault.run(cage_name = String, data = Hash[, options = Hash])
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| cageName | String | Name of the Cage to be run |
+| cage_name | String | Name of the Cage to be run |
 | data | Hash | Payload for the Cage |
 | options | Hash | [Options for the Cage run](#Cage-Run-Options) |
 
@@ -117,8 +117,21 @@ Evervault.encrypt_and_run(cage_name = String, data = Hash)
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| cageName | String | Name of the Cage to be run |
+| cage_name | String | Name of the Cage to be run |
 | data | dict | Data to be encrypted |
+
+### Evervault.create_run_token
+
+`Evervault.create_run_token` creates a run token so a cage can be run without an api key.
+
+```ruby
+Evervault.create_run_token(cage_name = String, data = Hash)
+```
+
+| Parameter | Type   | Description                                          |
+| --------- | ------ | ---------------------------------------------------- |
+| cage_name | String | Name of the Cage the run token should be created for |
+| data      | Hash   | Payload that the token can be used with              |
 
 ### Evervault.cages
 
