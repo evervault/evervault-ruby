@@ -56,7 +56,7 @@ module Evervault
     end
 
     def create_run_token(cage_name, data)
-      @request.post("v2/functions/#{cage_name}/run-token", data)
+      @request_handler.post("v2/functions/#{cage_name}/run-token", data)
     end
   end
 end
