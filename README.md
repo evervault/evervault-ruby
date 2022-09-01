@@ -122,7 +122,7 @@ Evervault.encrypt_and_run(cage_name = String, data = Hash)
 
 ### Evervault.create_run_token
 
-`Evervault.create_run_token` creates a run token so a cage can be run without an api key.
+`Evervault.create_run_token` creates a single use, time bound token for invoking a cage.
 
 ```ruby
 Evervault.create_run_token(cage_name = String, data = Hash)
