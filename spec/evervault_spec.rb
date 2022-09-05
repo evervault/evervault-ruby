@@ -339,4 +339,43 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
   it "has a version number" do
     expect(Evervault::VERSION).not_to be nil
   end
+
+  describe "create_run_token" do
+    before do 
+      allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request)
+      stub_request(:post, "https://api.evervault.com/v2/functions/testing-cage/run-token").with(
+        headers: {
+          "Accept"=>"application/json",
+          "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+          "Acceptencoding"=>"gzip, deflate",
+          "Api-Key"=>"testing",
+          "Content-Type"=>"application/json",
+          "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}"
+          },
+          body: {
+            name: "testing"
+          }.to_json
+        ).to_return({ status: status, body: response.to_json }) 
+    end
+
+    context "success" do
+      let(:response) { "runtoken123" }
+      let(:status) { 200 }
+
+      it "makes a post request to the API" do
+        Evervault.create_run_token("testing-cage", { name: "testing" })
+        assert_requested(:post, "https://api.evervault.com/v2/functions/testing-cage/run-token", body: { name: "testing" }, times: 1)
+      end
+    end
+
+    context "failure" do
+      let(:response) { { "Error" => "Bad request"} }
+      let(:status) { 400 }
+
+      it "makes a post request to the API and maps the error" do
+        expect { Evervault.create_run_token("testing-cage", { name: "testing" }) }.to raise_error(Evervault::Errors::BadRequestError)
+        assert_requested(:post, "https://api.evervault.com/v2/functions/testing-cage/run-token", body: { name: "testing" }, times: 1)
+      end
+    end
+  end
 end
