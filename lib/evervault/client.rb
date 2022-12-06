@@ -2,7 +2,6 @@ require_relative "http/request"
 require_relative "http/request_handler"
 require_relative "http/request_intercept"
 require_relative "crypto/client"
-require_relative "models/cage_list"
 
 module Evervault
   class Client
@@ -35,20 +34,6 @@ module Evervault
 
     def run(cage_name, encrypted_data, options = {})
       @request_handler.post(cage_name, encrypted_data, options: options, cage_run: true)
-    end
-
-    def encrypt_and_run(cage_name, data, options = {})
-      encrypted_data = encrypt(data)
-      run(cage_name, encrypted_data, options)
-    end
-
-    def cages
-      cage_list.to_hash
-    end
-
-    def cage_list
-      cages = @request_handler.get("cages")
-      @cage_list ||= Evervault::Models::CageList.new(cages: cages["cages"], request: @request)
     end
 
     def relay(decryption_domains=[])
