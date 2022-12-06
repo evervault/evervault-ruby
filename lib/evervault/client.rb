@@ -32,16 +32,16 @@ module Evervault
       @crypto_client.encrypt(data)
     end
 
-    def run(cage_name, encrypted_data, options = {})
-      @request_handler.post(cage_name, encrypted_data, options: options, cage_run: true)
+    def run(function_name, encrypted_data, options = {})
+      @request_handler.post(function_name, encrypted_data, options: options, cage_run: true)
     end
 
     def relay(decryption_domains=[])
       @intercept.setup_domains(decryption_domains)
     end
 
-    def create_run_token(cage_name, data)
-      @request_handler.post("v2/functions/#{cage_name}/run-token", data)
+    def create_run_token(function_name, data)
+      @request_handler.post("v2/functions/#{function_name}/run-token", data)
     end
   end
 end
