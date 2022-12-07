@@ -4,7 +4,6 @@ require_relative "http/request_intercept"
 require_relative "http/relay_outbound_config"
 require_relative "threading/repeated_timer"
 require_relative "crypto/client"
-require_relative "models/cage_list"
 
 module Evervault
   class Client
@@ -35,30 +34,16 @@ module Evervault
       @crypto_client.encrypt(data)
     end
 
-    def run(cage_name, encrypted_data, options = {})
-      @request_handler.post(cage_name, encrypted_data, options: options, cage_run: true)
-    end
-
-    def encrypt_and_run(cage_name, data, options = {})
-      encrypted_data = encrypt(data)
-      run(cage_name, encrypted_data, options)
-    end
-
-    def cages
-      cage_list.to_hash
-    end
-
-    def cage_list
-      cages = @request_handler.get("cages")
-      @cage_list ||= Evervault::Models::CageList.new(cages: cages["cages"], request: @request)
+    def run(function_name, encrypted_data, options = {})
+      @request_handler.post(function_name, encrypted_data, options: options, cage_run: true)
     end
 
     def relay(decryption_domains=[])
       @intercept.setup_domains(decryption_domains)
     end
 
-    def create_run_token(cage_name, data)
-      @request_handler.post("v2/functions/#{cage_name}/run-token", data)
+    def create_run_token(function_name, data)
+      @request_handler.post("v2/functions/#{function_name}/run-token", data)
     end
   end
 end
