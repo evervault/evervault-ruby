@@ -4,17 +4,17 @@
 
 # Evervault Ruby SDK
 
-The [Evervault](https://evervault.com) Ruby SDK is a toolkit for encrypting data as it enters your server, working with Functions, and proxying your outbound API requests to specific domains through [Outbound Relay](https://docs.evervault.com/concepts/relay/outbound-interception) to allow them to be decrypted before reaching their target.
+The [Evervault](https://evervault.com) Ruby SDK is a toolkit for encrypting data as it enters your server, working with Functions, and proxying your outbound API requests to specific domains through [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to allow them to be decrypted before reaching their target.
 
 ## Getting Started
 
 Before starting with the Evervault Ruby SDK, you will need to [create an account](https://app.evervault.com/register) and a team.
 
-For full installation support, [book time here](https://calendly.com/evervault/cages-onboarding).
+For full installation support, [book time here](https://calendly.com/evervault/support).
 
 ## Documentation
 
-See the Evervault [Ruby SDK documentation](https://docs.evervault.com/ruby).
+See the Evervault [Ruby SDK documentation](https://docs.evervault.com/reference/ruby-sdk).
 
 ## Installation
 
@@ -64,7 +64,7 @@ The Evervault Ruby SDK exposes eight methods.
 
 ### Evervault.encrypt
 
-`Evervault.encrypt` encrypts data for use in your [Evervault Functions](https://docs.evervault.com/tutorial). To encrypt data on your server, simply pass a supported value into the `Evervault.encrypt` method and then you can store the encrypted data in your database as normal.
+`Evervault.encrypt` encrypts data for use in your [Evervault Functions](https://docs.evervault.com/concepts/functions/overview). To encrypt data on your server, simply pass a supported value into the `Evervault.encrypt` method and then you can store the encrypted data in your database as normal.
 
 ```ruby
 Evervault.encrypt(data = String | Number | Boolean | Hash | Array)
@@ -76,7 +76,7 @@ Evervault.encrypt(data = String | Number | Boolean | Hash | Array)
 
 ### Evervault.relay
 
-`Evervault.relay` specifies which domains should be proxied through outbound relay. See [Outbound Relay](https://docs.evervault.com/concepts/relay/outbound-interception) to learn more.  
+`Evervault.relay` specifies which domains should be proxied through outbound relay. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more.  
 
 ```ruby
 Evervault.relay(decryption_domains = Array)
