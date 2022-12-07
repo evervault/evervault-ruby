@@ -3,7 +3,7 @@ module Evervault
         class RelayOutboundConfig
 
             DEFAULT_POLL_INTERVAL = 5
-            RELAY_OUTBOUND_CONFIG_API_ENDPOINT = "/v2/relay-outbound"
+            RELAY_OUTBOUND_CONFIG_API_ENDPOINT = "v2/relay-outbound"
 
             @@destination_domains_cache = nil
             @@poll_interval = DEFAULT_POLL_INTERVAL
@@ -18,7 +18,6 @@ module Evervault
                 if @@timer.nil?
                     @@timer = Evervault::Threading::RepeatedTimer.new(@@poll_interval, -> { self.get_relay_outbound_config })
                 end
-
             end
 
             def get_destination_domains

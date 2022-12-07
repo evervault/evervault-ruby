@@ -13,6 +13,7 @@ RSpec.describe Evervault do
       request: request, 
       ca_host: "https://ca.evervault.com",
       api_key: "testing", 
+      base_url: "https://api.evervault.com/",
       relay_url: "https://relay.evervault.com:8443",
     )
   end

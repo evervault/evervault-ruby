@@ -121,7 +121,7 @@ RSpec.describe Evervault do
 
     private def create_relay_outbound_config()
         Evervault::Http::RelayOutboundConfig.new(
-            base_url: "https://api.evervault.com", 
+            base_url: "https://api.evervault.com/", 
             request: request,
         )
     end

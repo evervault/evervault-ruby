@@ -20,7 +20,7 @@ module Evervault
     )
       @request = Evervault::Http::Request.new(timeout: request_timeout, api_key: api_key)
       @intercept = Evervault::Http::RequestIntercept.new(
-        request: @request, ca_host: ca_host, api_key: api_key, relay_url: relay_url
+        request: @request, ca_host: ca_host, api_key: api_key, base_url: base_url, relay_url: relay_url
       )
       @request_handler =
         Evervault::Http::RequestHandler.new(
@@ -38,8 +38,12 @@ module Evervault
       @request_handler.post(function_name, encrypted_data, options: options, cage_run: true)
     end
 
-    def relay(decryption_domains=[])
-      @intercept.setup_domains(decryption_domains)
+    def enable_outbound_relay(decryption_domains = [])
+      if decryption_domains.nil? || decryption_domains.empty?
+        @intercept.setup_outbound_relay_config
+      else
+        @intercept.setup_decryption_domains(decryption_domains)
+      end
     end
 
     def create_run_token(function_name, data)
