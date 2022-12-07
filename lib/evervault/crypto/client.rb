@@ -77,8 +77,7 @@ module Evervault
       end
 
       private def generate_shared_key()
-        ec = OpenSSL::PKey::EC.new(@curve)
-        ec.generate_key
+        ec = OpenSSL::PKey::EC.generate(@curve)
         @ephemeral_public_key = ec.public_key
 
         decoded_team_key = OpenSSL::BN.new(Base64.strict_decode64(@team_key), 2)
