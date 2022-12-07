@@ -1,6 +1,7 @@
 require_relative "http/request"
 require_relative "http/request_handler"
 require_relative "http/request_intercept"
+require_relative "http/relay_outbound_config"
 require_relative "threading/repeated_timer"
 require_relative "crypto/client"
 require_relative "models/cage_list"

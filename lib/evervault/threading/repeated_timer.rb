@@ -16,7 +16,7 @@ module Evervault
                             begin 
                                 @func.call
                             rescue => e
-                                # Silently ignore exemptions
+                                # Silently ignore exceptions
                             end
                         end
                     end
@@ -33,11 +33,7 @@ module Evervault
             end
 
             def update_interval(new_interval)
-                if new_interval != @interval
-                    @interval = new_interval
-                    self.stop
-                    self.start
-                end
+                @interval = new_interval
             end
         end
     end

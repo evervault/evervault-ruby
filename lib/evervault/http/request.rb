@@ -18,10 +18,7 @@ module Evervault
             req.options.timeout = @timeout
         end
         if resp.status >= 200 && resp.status <= 300
-          if is_ca
-            return resp.body
-          end
-          return JSON.parse(resp.body)
+          return resp
         end
         Evervault::Errors::ErrorMap.raise_errors_on_failure(resp.status, resp.body, resp.headers)
       end

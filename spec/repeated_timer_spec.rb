@@ -14,9 +14,10 @@ RSpec.describe Evervault do
                 timer.stop
             end
 
-            it "should silently ignore exemptions thrown by the invoked function" do
+            it "should silently ignore exceptions thrown by the invoked function" do
                 timer = Evervault::Threading::RepeatedTimer.new(0.1, -> { raise "error" })
                 expect(timer.running?).to be(true)
+                sleep 0.15
                 timer.stop
             end
         end
@@ -64,11 +65,12 @@ RSpec.describe Evervault do
             it "should update the interval of the timer" do
                 counter = 0
                 timer = Evervault::Threading::RepeatedTimer.new(0.1, -> { counter += 1 })
-                sleep 0.25
+                sleep 0.22
+                expect(counter).to be(2)
                 timer.update_interval(0.2)
                 expect(timer.running?).to be(true)
-                sleep 0.25
-                expect(counter).to be(3)
+                sleep 0.32
+                expect(counter).to be(4)
             end
         end
 
