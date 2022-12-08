@@ -297,6 +297,12 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
       expect(actual).to eq(false)
     end
 
+    it "does not route http requests to Relay if an empty array is passed as the decryption_domains argument" do
+      Evervault.enable_outbound_relay([])
+      actual = NetHTTPOverride.should_decrypt("foo.com")
+      expect(actual).to eq(false)
+    end
+
     it "routes http requests to Relay if a decryption domain is set" do
       Evervault.enable_outbound_relay(["foo.com"])
       actual = NetHTTPOverride.should_decrypt("foo.com")

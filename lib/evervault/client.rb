@@ -38,8 +38,8 @@ module Evervault
       @request_handler.post(function_name, encrypted_data, options: options, cage_run: true)
     end
 
-    def enable_outbound_relay(decryption_domains = [])
-      if decryption_domains.nil? || decryption_domains.empty?
+    def enable_outbound_relay(decryption_domains = nil)
+      if decryption_domains.nil?
         @intercept.setup_outbound_relay_config
       else
         @intercept.setup_decryption_domains(decryption_domains)
