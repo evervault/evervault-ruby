@@ -35,9 +35,13 @@ RSpec.describe Evervault do
       end
 
       it "should update the poll interval based on the server response" do
-        mock_api_interaction(single_outbound_destination(), 0.1)
+        mock_api_interaction(single_outbound_destination(), 0.2)
         relay_outbound_config = create_relay_outbound_config()
-        mock_api_interaction(double_outbound_destinations(), 0.2)
+        mock_api_interaction(single_outbound_destination(), 0.1)
+
+        sleep 1
+        
+        mock_api_interaction(double_outbound_destinations(), 0.1)
 
         sleep 1
 
