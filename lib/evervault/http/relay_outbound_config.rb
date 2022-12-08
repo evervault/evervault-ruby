@@ -12,10 +12,10 @@ module Evervault
         @base_url = base_url
         @request = request
         if @@destination_domains_cache.nil?
-          self.get_relay_outbound_config
+          get_relay_outbound_config
         end
         if @@timer.nil?
-          @@timer = Evervault::Threading::RepeatedTimer.new(@@poll_interval, -> { self.get_relay_outbound_config })
+          @@timer = Evervault::Threading::RepeatedTimer.new(@@poll_interval, -> { get_relay_outbound_config })
         end
       end
 
@@ -38,7 +38,7 @@ module Evervault
         resp = @request.execute(:get, "#{@base_url}#{RELAY_OUTBOUND_CONFIG_API_ENDPOINT}", nil)
         poll_interval = resp.headers["x-poll-interval"]
         unless poll_interval.nil?
-          self.update_poll_interval(poll_interval.to_f)
+          update_poll_interval(poll_interval.to_f)
         end
         resp_body = JSON.parse(resp.body)
         @@destination_domains_cache = resp_body["outboundDestinations"].values.map{ |outbound_destination| outbound_destination["destinationDomain"] }

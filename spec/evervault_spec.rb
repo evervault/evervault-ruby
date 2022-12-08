@@ -279,14 +279,14 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
     end
 
     it "routes http requests to Relay if Outbound Relay is enabled and domain is set" do
-      self.mock_relay_outbound_api_interaction
+      mock_relay_outbound_api_interaction
       Evervault.enable_outbound_relay()
       actual = NetHTTPOverride.should_decrypt("foo.com")
       expect(actual).to eq(true)
     end
 
     it "does not route http requests to Relay if Outbound Relay is enabled and domain is not set" do
-      self.mock_relay_outbound_api_interaction
+      mock_relay_outbound_api_interaction
       Evervault.enable_outbound_relay()
       actual = NetHTTPOverride.should_decrypt("bar.com")
       expect(actual).to eq(false)

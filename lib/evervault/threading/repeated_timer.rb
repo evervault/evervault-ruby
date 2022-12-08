@@ -5,11 +5,11 @@ module Evervault
         @thread = nil
         @interval = interval
         @func = func
-        self.start
+        start
       end
 
       def start
-        if !self.running?
+        if !running?
           @thread = Thread.new do
             loop do
               sleep @interval
