@@ -76,7 +76,7 @@ Evervault.encrypt(data = String | Number | Boolean | Hash | Array)
 
 ### Evervault.enable_outbound_relay
 
-`Evervault.enable_outbound_relay` specifies which domains should be proxied through outbound relay. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more.  
+`Evervault.enable_outbound_relay` configures your application to proxy requests using Outbound Relay based on the configuration created in the Evervault UI. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more.  
 
 ```ruby
 Evervault.enable_outbound_relay([decryption_domains = Array])
@@ -84,7 +84,7 @@ Evervault.enable_outbound_relay([decryption_domains = Array])
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
-| decryption_domains | `Array` | Optional: Requests sent to any of the domains listed will be proxied through outbound relay |
+| decryption_domains | `Array` | Optional -- Requests sent to any of the domains listed will be proxied through Outbound Relay. This will override the configuration created using the Evervault UI. |
 
 ### Evervault.run
 
