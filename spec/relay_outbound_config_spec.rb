@@ -29,48 +29,27 @@ RSpec.describe Evervault do
         expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com"])
         mock_api_interaction(double_outbound_destinations(), 0.1)
 
-        sleep 0.15
+        sleep 1
         
         expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com", "test-two.destinations.com"])
-      end
-
-      it "should not start polling if already polling" do
-        mock_api_interaction(single_outbound_destination(), 0.1)
-        relay_outbound_config_1 = create_relay_outbound_config()
-        relay_outbound_config_2 = create_relay_outbound_config()
-        expect(relay_outbound_config_1.get_destination_domains()).to eq(["test-one.destinations.com"])
-        expect(relay_outbound_config_2.get_destination_domains()).to eq(["test-one.destinations.com"])
-
-        mock_api_interaction(double_outbound_destinations(), 0.1)
-
-        sleep 0.15
-        
-        expect(relay_outbound_config_1.get_destination_domains()).to eq(["test-one.destinations.com", "test-two.destinations.com"])
-        expect(relay_outbound_config_2.get_destination_domains()).to eq(["test-one.destinations.com", "test-two.destinations.com"])
       end
 
       it "should update the poll interval based on the server response" do
         mock_api_interaction(single_outbound_destination(), 0.1)
         relay_outbound_config = create_relay_outbound_config()
-        mock_api_interaction(single_outbound_destination(), 0.2)
-        expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com"])
-
-        sleep 0.12
-
-        expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com"])
         mock_api_interaction(double_outbound_destinations(), 0.2)
 
-        sleep 0.25
+        sleep 1
 
         expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com", "test-two.destinations.com"])
       end
 
       it "should not update the poll interval if not specified by the server" do
-        mock_api_interaction(single_outbound_destination(), 0.1)
+        mock_api_interaction(single_outbound_destination(), 1)
         relay_outbound_config = create_relay_outbound_config()
         mock_api_interaction_without_poll_interval(double_outbound_destinations())
 
-        sleep 0.15
+        sleep 1.9
 
         expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com", "test-two.destinations.com"])
       end
@@ -80,7 +59,7 @@ RSpec.describe Evervault do
         relay_outbound_config = create_relay_outbound_config()
         mock_failed_api_interaction()
 
-        sleep 0.15
+        sleep 1
 
         expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com"])
       end
@@ -101,7 +80,7 @@ RSpec.describe Evervault do
         expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com"])
         Evervault::Http::RelayOutboundConfig.disable_polling()
 
-        sleep 0.15
+        sleep 0.5
 
         mock_api_interaction(double_outbound_destinations())
         expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com"])
