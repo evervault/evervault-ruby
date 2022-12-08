@@ -11,8 +11,7 @@ module NetHTTPOverride
   @@relay_url = nil
   @@relay_port = nil
   @@cert = nil
-  @@decrypt_if_exact = []
-  @@decrypt_if_ends_with = []
+  @@get_decryption_domains_func = nil
 
   def self.set_api_key(value)
     @@api_key = value
@@ -28,20 +27,27 @@ module NetHTTPOverride
     @@cert = value
   end
 
-  def self.add_to_decrypt_if_exact(value)
-    @@decrypt_if_exact.append(value)
+  def self.add_get_decryption_domains_func(get_decryption_domains_func)
+    @@get_decryption_domains_func = get_decryption_domains_func
   end
 
-  def self.add_to_decrypt_if_ends_with(value)
-    @@decrypt_if_ends_with.append(value)
-  end
-
-  def should_decrypt(domain)
-    return (@@decrypt_if_exact.include? domain) || (@@decrypt_if_ends_with.any? { |suffix| domain.end_with? suffix })
+  def self.should_decrypt(domain)
+    if @@get_decryption_domains_func.nil?
+      false
+    else
+      decryption_domains = @@get_decryption_domains_func.call()
+      decryption_domains.any? { |decryption_domain| 
+        if decryption_domain.start_with?("*")
+          domain.end_with?(decryption_domain[1..-1])
+        else
+          domain == decryption_domain
+        end
+      }
+    end
   end
 
   def connect
-    if should_decrypt(conn_address)
+    if NetHTTPOverride.should_decrypt(conn_address)
       @cert_store = OpenSSL::X509::Store.new
       @cert_store.add_cert(@@cert)
       @proxy_from_env = false
@@ -52,7 +58,7 @@ module NetHTTPOverride
   end
 
   def request(req, body = nil, &block)
-    should_decrypt = should_decrypt(@address)
+    should_decrypt = NetHTTPOverride.should_decrypt(@address)
     if should_decrypt
       req["Proxy-Authorization"] = @@api_key
     end
@@ -65,11 +71,12 @@ Net::HTTP.send :prepend, NetHTTPOverride
 module Evervault
   module Http
     class RequestIntercept
-      def initialize(request:, ca_host:, api_key:, relay_url:)
+      def initialize(request:, ca_host:, api_key:, base_url:, relay_url:)
         NetHTTPOverride.set_api_key(api_key)
         NetHTTPOverride.set_relay_url(relay_url)
         
         @request = request
+        @base_url = base_url
         @ca_host = ca_host
         @expire_date = nil
         @initial_date = nil
@@ -85,15 +92,17 @@ module Evervault
         return false
       end
 
-      def setup_domains(decrypt_domains=[])
-        for domain in decrypt_domains
-          if domain.start_with?("www.")
-            domain = domain[4..-1]
-          end
-          NetHTTPOverride.add_to_decrypt_if_exact(domain)
-          NetHTTPOverride.add_to_decrypt_if_ends_with("." + domain)
-          NetHTTPOverride.add_to_decrypt_if_ends_with("@" + domain)
-        end
+      def setup_decryption_domains(decryption_domains)
+        NetHTTPOverride.add_get_decryption_domains_func(-> {
+          decryption_domains
+        })
+      end
+
+      def setup_outbound_relay_config
+        @relay_outbound_config = Evervault::Http::RelayOutboundConfig.new(base_url: @base_url, request: @request)
+        NetHTTPOverride.add_get_decryption_domains_func(-> {
+          @relay_outbound_config.get_destination_domains
+        })
       end
 
       def setup
@@ -107,7 +116,7 @@ module Evervault
         while !ca_content && i < 1
           i += 1
           begin
-            ca_content = @request.execute("get", @ca_host, nil, {}, is_ca: true)
+            ca_content = @request.execute("get", @ca_host, nil, {}).body
           rescue;
           end
         end

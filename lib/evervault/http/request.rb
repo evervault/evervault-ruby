@@ -11,17 +11,14 @@ module Evervault
         @api_key = api_key
       end
 
-      def execute(method, url, params, optional_headers = {}, is_ca = false)
+      def execute(method, url, params, optional_headers = {})
         resp = Faraday.send(method, url) do |req|
             req.body = params.nil? || params.empty? ? nil : params.to_json
             req.headers = build_headers(optional_headers)
             req.options.timeout = @timeout
         end
         if resp.status >= 200 && resp.status <= 300
-          if is_ca
-            return resp.body
-          end
-          return JSON.parse(resp.body)
+          return resp
         end
         Evervault::Errors::ErrorMap.raise_errors_on_failure(resp.status, resp.body, resp.headers)
       end

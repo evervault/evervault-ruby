@@ -17,28 +17,36 @@ module Evervault
         if @cert.is_certificate_expired()
           @cert.setup()
         end
-        @request.execute(:get, build_url(path), params)
+        resp = @request.execute(:get, build_url(path), params)
+        parse_json_body(resp.body)
       end
 
       def put(path, params)
         if @cert.is_certificate_expired()
           @cert.setup()
         end
-        @request.execute(:put, build_url(path), params)
+        resp = @request.execute(:put, build_url(path), params)
+        parse_json_body(resp.body)
       end
 
       def delete(path, params)
         if @cert.is_certificate_expired()
           @cert.setup()
         end
-        @request.execute(:delete, build_url(path), params)
+        resp = @request.execute(:delete, build_url(path), params)
+        parse_json_body(resp.body)
       end
 
       def post(path, params, options: {}, cage_run: false)
         if @cert.is_certificate_expired()
           @cert.setup()
         end
-        @request.execute(:post, build_url(path, cage_run), params, build_cage_run_headers(options, cage_run))
+        resp = @request.execute(:post, build_url(path, cage_run), params, build_cage_run_headers(options, cage_run))
+        parse_json_body(resp.body)
+      end
+
+      private def parse_json_body(body)
+        JSON.parse(body)
       end
 
       private def build_url(path, cage_run = false)
