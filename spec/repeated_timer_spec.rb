@@ -5,17 +5,17 @@ RSpec.describe Evervault do
     describe "initialize" do
       it "should start the timer and invoke the function at regular interval" do
         counter = 0
-        timer = Evervault::Threading::RepeatedTimer.new(0.2, -> { counter += 1 })
+        timer = Evervault::Threading::RepeatedTimer.new(0.1, -> { counter += 1 })
         expect(timer.running?).to be(true)
-        sleep 0.50
-        expect(counter).to be(2)
+        sleep 1
+        expect(counter).to be >= 2
         timer.stop
       end
 
       it "should silently ignore exceptions thrown by the invoked function" do
         timer = Evervault::Threading::RepeatedTimer.new(0.1, -> { raise "error" })
         expect(timer.running?).to be(true)
-        sleep 0.20
+        sleep 0.50
         timer.stop
       end
     end
@@ -23,22 +23,13 @@ RSpec.describe Evervault do
     describe "start" do
       it "should start a repeated timer if the timer is not already running" do
         counter = 0
-        timer = Evervault::Threading::RepeatedTimer.new(0.2, -> { counter += 1 })
+        timer = Evervault::Threading::RepeatedTimer.new(0.1, -> { counter += 1 })
         timer.stop
-        timer.start
-        expect(timer.running?).to be(true)
-        sleep 0.50
-        expect(counter).to be(2)
-        timer.stop
-      end
-
-      it "should not start a repeated timer if the timer is already running" do
         counter = 0
-        timer = Evervault::Threading::RepeatedTimer.new(0.2, -> { counter += 1 })
         timer.start
         expect(timer.running?).to be(true)
-        sleep 0.50
-        expect(counter).to be(2)
+        sleep 1
+        expect(counter).to be >= 2
         timer.stop
       end
     end
@@ -62,12 +53,10 @@ RSpec.describe Evervault do
     describe "update_interval" do
       it "should update the interval of the timer" do
         counter = 0
-        timer = Evervault::Threading::RepeatedTimer.new(0.2, -> { counter += 1 })
-        sleep 0.22
-        expect(counter).to be(1)
-        timer.update_interval(0.4)
-        sleep 0.70
-        expect(counter).to be(3)
+        timer = Evervault::Threading::RepeatedTimer.new(0.1, -> { counter += 1 })
+        timer.update_interval(0.2)
+        sleep 1
+        expect(counter).to be >=2
       end
     end
 
@@ -76,9 +65,10 @@ RSpec.describe Evervault do
         counter = 0
         timer = Evervault::Threading::RepeatedTimer.new(0.2, -> { counter += 1 })
         timer.stop
+        expected = counter
         expect(timer.running?).to be(false)
-        sleep 0.40
-        expect(counter).to be(0)
+        sleep 1
+        expect(counter).to be expected
       end
     end
   end
