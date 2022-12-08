@@ -11,7 +11,7 @@ module NetHTTPOverride
   @@relay_url = nil
   @@relay_port = nil
   @@cert = nil
-  @@get_decryption_domains_lambda = nil
+  @@get_decryption_domains_func = nil
 
   def self.set_api_key(value)
     @@api_key = value
@@ -27,15 +27,15 @@ module NetHTTPOverride
     @@cert = value
   end
 
-  def self.add_get_decryption_domains(get_decryption_domains)
-    @@get_decryption_domains_lambda = get_decryption_domains
+  def self.add_get_decryption_domains_func(get_decryption_domains_func)
+    @@get_decryption_domains_func = get_decryption_domains_func
   end
 
   def self.should_decrypt(domain)
-    if @@get_decryption_domains_lambda.nil?
+    if @@get_decryption_domains_func.nil?
       false
     else
-      decryption_domains = @@get_decryption_domains_lambda.call()
+      decryption_domains = @@get_decryption_domains_func.call()
       decryption_domains.any? { |decryption_domain| 
         if decryption_domain.start_with?("*")
           domain.end_with?(decryption_domain[1..-1])
@@ -93,14 +93,14 @@ module Evervault
       end
 
       def setup_decryption_domains(decryption_domains)
-        NetHTTPOverride.add_get_decryption_domains(-> {
+        NetHTTPOverride.add_get_decryption_domains_func(-> {
           decryption_domains
         })
       end
 
       def setup_outbound_relay_config
         @relay_outbound_config = Evervault::Http::RelayOutboundConfig.new(base_url: @base_url, request: @request)
-        NetHTTPOverride.add_get_decryption_domains(-> {
+        NetHTTPOverride.add_get_decryption_domains_func(-> {
           @relay_outbound_config.get_destination_domains
         })
       end

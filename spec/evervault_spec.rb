@@ -275,7 +275,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
     after :each do
       Evervault::Http::RelayOutboundConfig.disable_polling()
       Evervault::Http::RelayOutboundConfig.clear_cache()
-      NetHTTPOverride.add_get_decryption_domains(nil)
+      NetHTTPOverride.add_get_decryption_domains_func(nil)
     end
 
     it "routes http requests to Relay if Outbound Relay is enabled and domain is set" do

@@ -76,7 +76,7 @@ Evervault.encrypt(data = String | Number | Boolean | Hash | Array)
 
 ### Evervault.enable_outbound_relay
 
-`Evervault.enable_outbound_relay` configures your application to proxy requests using Outbound Relay based on the configuration created in the Evervault UI. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more.  
+`Evervault.enable_outbound_relay` configures your application to proxy HTTP requests using Outbound Relay based on the configuration created in the Evervault UI. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more.  
 
 ```ruby
 Evervault.enable_outbound_relay([decryption_domains = Array])
