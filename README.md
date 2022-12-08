@@ -56,11 +56,20 @@ encrypted_data = Evervault.encrypt({ hello: 'World!' })
 
 # Process the encrypted data using a Function
 result = Evervault.run(<FUNCTION-NAME>, encrypted_data)
+
+# Send the decrypted data to a third-party API
+Evervault.enable_outbound_relay
+uri = URI('https://example.com')
+req = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/json')
+req.body = encrypted_data.to_json
+http = Net::HTTP.new(uri.host, uri.port)
+http.use_ssl = true
+res = http.request(req)
 ```
 
 ## Reference
 
-The Evervault Ruby SDK exposes eight methods.
+The Evervault Ruby SDK exposes four methods.
 
 ### Evervault.encrypt
 

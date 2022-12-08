@@ -320,7 +320,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
         'Acceptencoding'=>'gzip, deflate',
         'Api-Key'=>'testing',
         'Content-Type'=>'application/json',
-        'User-Agent'=>'evervault-ruby/1.1.0'
+        'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
       })
     .to_return(
       status: 200, 
@@ -359,7 +359,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
         'Acceptencoding'=>'gzip, deflate',
         'Api-Key'=>'testing',
         'Content-Type'=>'application/json',
-        'User-Agent'=>'evervault-ruby/1.1.0'
+        'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
       })
     .to_return(
       status: 500, 
