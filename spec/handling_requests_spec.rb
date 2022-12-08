@@ -67,7 +67,7 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
           'Acceptencoding'=>'gzip, deflate',
           'Api-Key'=>'testing',
           'Content-Type'=>'application/json',
-          'User-Agent'=>'evervault-ruby/1.1.0'
+          'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
            }).
          to_return(status: 200, body: "{}", headers: {})
       expect(intercept).to receive(:setup)
@@ -83,7 +83,7 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
           'Acceptencoding'=>'gzip, deflate',
           'Api-Key'=>'testing',
           'Content-Type'=>'application/json',
-          'User-Agent'=>'evervault-ruby/1.1.0'
+          'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
            }).
          to_return(status: 200, body: "{}", headers: {})
       expect(intercept).to receive(:setup)
@@ -99,7 +99,7 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
           'Acceptencoding'=>'gzip, deflate',
           'Api-Key'=>'testing',
           'Content-Type'=>'application/json',
-          'User-Agent'=>'evervault-ruby/1.1.0'
+          'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
            }).
          to_return(status: 200, body: "{}", headers: {})
       expect(intercept).to receive(:setup)
@@ -115,7 +115,7 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
           'Acceptencoding'=>'gzip, deflate',
           'Api-Key'=>'testing',
           'Content-Type'=>'application/json',
-          'User-Agent'=>'evervault-ruby/1.1.0'
+          'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
            }).
          to_return(status: 200, body: "{}", headers: {})
       expect(intercept).to receive(:setup)

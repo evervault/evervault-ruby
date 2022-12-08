@@ -40,7 +40,7 @@ RSpec.describe Evervault do
         mock_api_interaction(single_outbound_destination(), 0.1)
 
         sleep 1
-        
+
         mock_api_interaction(double_outbound_destinations(), 0.1)
 
         sleep 1
@@ -118,7 +118,7 @@ RSpec.describe Evervault do
         'Acceptencoding'=>'gzip, deflate',
         'Api-Key'=>'testing',
         'Content-Type'=>'application/json',
-        'User-Agent'=>'evervault-ruby/1.1.0'
+        'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
       })
     .to_return(
       status: 200, 
@@ -139,7 +139,7 @@ RSpec.describe Evervault do
         'Acceptencoding'=>'gzip, deflate',
         'Api-Key'=>'testing',
         'Content-Type'=>'application/json',
-        'User-Agent'=>'evervault-ruby/1.1.0'
+        'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
       })
     .to_return(
       status: 200, 
@@ -159,7 +159,7 @@ RSpec.describe Evervault do
         'Acceptencoding'=>'gzip, deflate',
         'Api-Key'=>'testing',
         'Content-Type'=>'application/json',
-        'User-Agent'=>'evervault-ruby/1.1.0'
+        'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
       })
     .to_return(
       status: 400, 
