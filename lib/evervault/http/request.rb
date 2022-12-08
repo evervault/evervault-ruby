@@ -11,7 +11,7 @@ module Evervault
         @api_key = api_key
       end
 
-      def execute(method, url, params, optional_headers = {}, is_ca = false)
+      def execute(method, url, params, optional_headers = {})
         resp = Faraday.send(method, url) do |req|
             req.body = params.nil? || params.empty? ? nil : params.to_json
             req.headers = build_headers(optional_headers)

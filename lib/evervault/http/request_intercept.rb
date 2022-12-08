@@ -116,7 +116,7 @@ module Evervault
         while !ca_content && i < 1
           i += 1
           begin
-            ca_content = @request.execute("get", @ca_host, nil, {}, is_ca: true).body
+            ca_content = @request.execute("get", @ca_host, nil, {}).body
           rescue;
           end
         end
