@@ -1,5 +1,6 @@
 require_relative "spec_helper"
 require "webmock"
+require "faraday"
 
 RSpec.describe Evervault do
   let(:public_key) { "Ax1NYOSqswFgsRoLFTac7eOvRu7h3GuLmUPKlHpOqsFA" }
@@ -268,4 +269,100 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
       end
     end
   end
+
+  describe "enable_outbound_relay" do
+
+    after :each do
+      Evervault::Http::RelayOutboundConfig.disable_polling()
+      Evervault::Http::RelayOutboundConfig.clear_cache()
+      NetHTTPOverride.add_get_decryption_domains(nil)
+    end
+
+    it "routes http requests to Relay if Outbound Relay is enabled and domain is set" do
+      self.mock_relay_outbound_api_interaction
+      Evervault.enable_outbound_relay()
+      actual = NetHTTPOverride.should_decrypt("foo.com")
+      expect(actual).to eq(true)
+    end
+
+    it "does not route http requests to Relay if Outbound Relay is enabled and domain is not set" do
+      self.mock_relay_outbound_api_interaction
+      Evervault.enable_outbound_relay()
+      actual = NetHTTPOverride.should_decrypt("bar.com")
+      expect(actual).to eq(false)
+    end
+
+    it "does not route http requests to Relay if Outbound Relay is disabled" do
+      actual = NetHTTPOverride.should_decrypt("foo.com")
+      expect(actual).to eq(false)
+    end
+
+    it "routes http requests to Relay if a decryption domain is set" do
+      Evervault.enable_outbound_relay(["foo.com"])
+      actual = NetHTTPOverride.should_decrypt("foo.com")
+      expect(actual).to eq(true)
+    end
+
+  end
+
+  private def mock_relay_outbound_api_interaction
+    stub_request(:get, "https://api.evervault.com/v2/relay-outbound")
+    .with(
+      headers: {
+        'Accept'=>'application/json',
+        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+        'Acceptencoding'=>'gzip, deflate',
+        'Api-Key'=>'testing',
+        'Content-Type'=>'application/json',
+        'User-Agent'=>'evervault-ruby/1.1.0'
+      })
+    .to_return(
+      status: 200, 
+      body: {
+        "appUuid" => "app_33b88ca7da01",
+        "teamUuid" => "2ef8d35ce661",
+        "strictMode"  => true,
+        "outboundDestinations" => {
+            "foo.com" => {
+                "id" => 144,
+                "appUuid" => "app_33b88ca7da01",
+                "createdAt" => "2022-10-05T08: 36: 35.681Z",
+                "updatedAt" => "2022-10-05T08: 36: 35.681Z",
+                "deletedAt" => nil,
+                "routeSpecificFieldsToEncrypt" => [],
+                "deterministicFieldsToEncrypt" => [],
+                "encryptEmptyStrings" => true,
+                "curve" => "secp256k1",
+                "uuid" => "outbound_destination_9733a04135f1",
+                "destinationDomain" => "foo.com",
+              },
+            },
+      }.to_json,
+      headers: {
+        "Content-Type" => "application/json",
+        "X-Poll-Interval" => "5",
+      })
+  end
+
+  private def mock_failed_relay_outbound_api_interaction
+    stub_request(:get, "https://api.evervault.com/v2/relay-outbound")
+    .with(
+      headers: {
+        'Accept'=>'application/json',
+        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+        'Acceptencoding'=>'gzip, deflate',
+        'Api-Key'=>'testing',
+        'Content-Type'=>'application/json',
+        'User-Agent'=>'evervault-ruby/1.1.0'
+      })
+    .to_return(
+      status: 500, 
+      body: {
+        "error" => "internal_server_error",
+      }.to_json,
+      headers: {
+        "Content-Type" => "application/json",
+      })
+  end
+
 end
