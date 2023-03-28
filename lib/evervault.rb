@@ -6,8 +6,20 @@ module Evervault
   class << self
     attr_accessor :api_key
 
-    def method_missing(method, *args, &block)
-      client.send(method, *args, &block)
+    def encrypt(data)
+      client.encrypt(data)
+    end
+
+    def run(function_name, encrypted_data, options = {})
+      client.run(function_name, encrypted_data, options)
+    end
+
+    def enable_outbound_relay(decryption_domains = nil)
+      client.enable_outbound_relay(decryption_domains)
+    end
+
+    def create_run_token(function_name, data = {})
+      client.create_run_token(function_name, data)
     end
 
     private def client
