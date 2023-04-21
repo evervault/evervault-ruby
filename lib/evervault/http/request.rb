@@ -12,7 +12,7 @@ module Evervault
       end
 
       def execute(method, url, params, optional_headers = {})
-        resp = Faraday.send(method, url) do |req|
+        resp = Faraday.public_send(method, url) do |req|
             req.body = params.nil? || params.empty? ? nil : params.to_json
             req.headers = build_headers(optional_headers)
             req.options.timeout = @timeout
