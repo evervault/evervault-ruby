@@ -46,7 +46,7 @@ module NetHTTPOverride
     end
   end
 
-  def connect
+  def connect_with_intercept
     if NetHTTPOverride.should_decrypt(conn_address)
       @cert_store = OpenSSL::X509::Store.new
       @cert_store.add_cert(@@cert)
@@ -54,19 +54,25 @@ module NetHTTPOverride
       @proxy_address = @@relay_url
       @proxy_port = @@relay_port
     end
-    super
+    connect_without_intercept
   end
 
-  def request(req, body = nil, &block)
+  def request_with_intercept(req, body = nil, &block)
     should_decrypt = NetHTTPOverride.should_decrypt(@address)
     if should_decrypt
       req["Proxy-Authorization"] = @@api_key
     end
-    super
+    request_without_intercept(req, body, &block)
   end
 end
 
-Net::HTTP.send :prepend, NetHTTPOverride
+Net::HTTP.class_eval do
+  include NetHTTPOverride
+  alias_method :request_without_intercept, :request
+  alias_method :request, :request_with_intercept
+  alias_method :connect_without_intercept, :connect
+  alias_method :connect, :connect_with_intercept
+end
 
 module Evervault
   module Http
