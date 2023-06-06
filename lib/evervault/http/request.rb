@@ -1,14 +1,16 @@
 require "faraday"
 require "json"
+require "base64"
 require_relative "../version"
 require_relative "../errors/error_map"
 
 module Evervault
   module Http
     class Request
-      def initialize(timeout:, api_key:)
+      def initialize(timeout:, api_key:, app_uuid:)
         @timeout = timeout
         @api_key = api_key
+        @app_uuid = app_uuid
       end
 
       def execute(method, url, params, optional_headers = {})
@@ -30,6 +32,7 @@ module Evervault
           "Content-Type": "application/json",
           "User-Agent": "evervault-ruby/#{VERSION}",
           "Api-Key": @api_key,
+          "Authorization": Base64.encode("#{@app_uuid}:#{@api_key}")
         })
       end
     end

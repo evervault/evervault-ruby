@@ -11,6 +11,7 @@ module Evervault
     attr_accessor :api_key, :base_url, :cage_run_url, :request_timeout
     def initialize(
       api_key:,
+      app_uuid:,
       base_url: "https://api.evervault.com/",
       cage_run_url: "https://run.evervault.com/",
       relay_url: "https://relay.evervault.com:8443",
@@ -18,7 +19,7 @@ module Evervault
       request_timeout: 30,
       curve: 'prime256v1'
     )
-      @request = Evervault::Http::Request.new(timeout: request_timeout, api_key: api_key)
+      @request = Evervault::Http::Request.new(timeout: request_timeout, api_key: api_key, app_uuid: app_uuid)
       @intercept = Evervault::Http::RequestIntercept.new(
         request: @request, ca_host: ca_host, api_key: api_key, base_url: base_url, relay_url: relay_url
       )
@@ -36,6 +37,14 @@ module Evervault
 
     def run(function_name, encrypted_data, options = {})
       @request_handler.post(function_name, encrypted_data, options: options, cage_run: true)
+    end
+
+    def decrypt(data)
+      raise Evervault::Errors::ArgumentError.new(
+          "data must be of type Hash"
+        ) if !(data.instance_of?(Hash))
+
+      @request_handler.post("/decrypt", data)
     end
 
     def enable_outbound_relay(decryption_domains = nil)

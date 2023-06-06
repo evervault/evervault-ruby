@@ -50,6 +50,7 @@ require "evervault"
 
 # Initialize the client with your team's API key
 Evervault.api_key = <YOUR-API-KEY>
+Evervault.app_uuid = <YOUR-APP-ID>
 
 # Encrypt your data
 encrypted_data = Evervault.encrypt({ hello: 'World!' })
@@ -65,6 +66,9 @@ req.body = encrypted_data.to_json
 http = Net::HTTP.new(uri.host, uri.port)
 http.use_ssl = true
 res = http.request(req)
+
+# Decrypt your data
+decrypted = Evervault.decrypt({ encrypted: encrypted_data })
 ```
 
 ## Reference
@@ -82,6 +86,18 @@ Evervault.encrypt(data = String | Number | Boolean | Hash | Array)
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | data | `String`, `Number`, `Boolean`, `Hash`, `Array` | Data to be encrypted |
+
+### Evervault.decrypt
+
+`Evervault.decrypt` decrypts the data previously encrypted with the `Evervault.encrypt` function or through Relay.
+
+```ruby
+Evervault.decrypt(data = Hash)
+```
+
+| Parameter | Type   | Description          |
+| --------- | ------ | -------------------- |
+| data      | `Hash` | Data to be decrypted |
 
 ### Evervault.enable_outbound_relay
 
