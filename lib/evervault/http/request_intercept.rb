@@ -5,6 +5,7 @@ require "openssl"
 require 'net/http'
 require_relative "../version"
 require_relative "../errors/errors"
+# require_relative "../http/relay_outbound_config"
 
 module NetHTTPOverride
   @@api_key = nil
@@ -12,6 +13,7 @@ module NetHTTPOverride
   @@relay_port = nil
   @@cert = nil
   @@get_decryption_domains_func = nil
+  @@get_decryption_domain_regexes_func = nil
 
   def self.set_api_key(value)
     @@api_key = value
@@ -29,19 +31,23 @@ module NetHTTPOverride
 
   def self.add_get_decryption_domains_func(get_decryption_domains_func)
     @@get_decryption_domains_func = get_decryption_domains_func
+    @@get_decryption_domain_regexes_func = get_decryption_domains_func && lambda {
+      @@get_decryption_domains_func.call().map {
+        |pattern|  Evervault::Http::RelayOutboundConfig.build_domain_regex_from_pattern(pattern)
+      }
+    }
+  end
+
+  def self.add_get_decryption_domain_regexes_func(get_decryption_domain_regexes_func)
+    @@get_decryption_domain_regexes_func = get_decryption_domain_regexes_func
   end
 
   def self.should_decrypt(domain)
-    if @@get_decryption_domains_func.nil?
-      false
+    if @@get_decryption_domain_regexes_func.nil?
+      return false
     else
-      decryption_domains = @@get_decryption_domains_func.call()
-      decryption_domains.any? { |decryption_domain| 
-        if decryption_domain.start_with?("*")
-          domain.end_with?(decryption_domain[1..-1])
-        else
-          domain == decryption_domain
-        end
+      return @@get_decryption_domain_regexes_func.call().any? {
+        |decryption_domain_regex| decryption_domain_regex.match(domain)
       }
     end
   end
@@ -61,6 +67,7 @@ module NetHTTPOverride
     should_decrypt = NetHTTPOverride.should_decrypt(@address)
     if should_decrypt
       req["Proxy-Authorization"] = @@api_key
+      puts "API KEY IS #{@@api_key}"
     end
     request_without_intercept(req, body, &block)
   end
@@ -102,12 +109,21 @@ module Evervault
         NetHTTPOverride.add_get_decryption_domains_func(-> {
           decryption_domains
         })
+        decryption_domain_regexes = decryption_domains.map{
+          |pattern| Evervault::Http::RelayOutboundConfig.build_domain_regex_from_pattern(pattern)
+        }
+        NetHTTPOverride.add_get_decryption_domain_regexes_func(-> {
+          decryption_domain_regexes
+        })
       end
 
       def setup_outbound_relay_config
         @relay_outbound_config = Evervault::Http::RelayOutboundConfig.new(base_url: @base_url, request: @request)
         NetHTTPOverride.add_get_decryption_domains_func(-> {
           @relay_outbound_config.get_destination_domains
+        })
+        NetHTTPOverride.add_get_decryption_domain_regexes_func(-> {
+          @relay_outbound_config.get_destination_domain_regexes
         })
       end
 
