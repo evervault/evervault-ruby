@@ -44,7 +44,7 @@ module Evervault
           "data must be of type Hash"
         ) if !(data.instance_of?(Hash))
 
-      @request_handler.post("/decrypt", data)
+      @request_handler.post("decrypt", data)
     end
 
     def enable_outbound_relay(decryption_domains = nil)

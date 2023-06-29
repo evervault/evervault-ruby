@@ -1,6 +1,5 @@
 require "faraday"
 require "json"
-require "base64"
 require_relative "../version"
 require_relative "../errors/error_map"
 
@@ -14,25 +13,34 @@ module Evervault
       end
 
       def execute(method, url, params, optional_headers = {})
-        resp = Faraday.send(method, url) do |req|
+        resp = faraday.public_send(method, url) do |req|
             req.body = params.nil? || params.empty? ? nil : params.to_json
             req.headers = build_headers(optional_headers)
             req.options.timeout = @timeout
         end
+
         if resp.status >= 200 && resp.status <= 300
           return resp
         end
+
         Evervault::Errors::ErrorMap.raise_errors_on_failure(resp.status, resp.body, resp.headers)
       end
 
-      private def build_headers(optional_headers)
+      private
+
+      def faraday
+        Faraday.new do |conn|
+          conn.request :authorization, :basic, @app_uuid, @api_key
+        end
+      end
+
+      def build_headers(optional_headers)
         optional_headers.merge({
           "AcceptEncoding": "gzip, deflate",
           "Accept": "application/json",
           "Content-Type": "application/json",
           "User-Agent": "evervault-ruby/#{VERSION}",
           "Api-Key": @api_key,
-          "Authorization": Base64.encode("#{@app_uuid}:#{@api_key}")
         })
       end
     end

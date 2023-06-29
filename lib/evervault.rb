@@ -11,6 +11,10 @@ module Evervault
       client.encrypt(data)
     end
 
+    def decrypt(data)
+      client.decrypt(data)
+    end
+
     def run(function_name, encrypted_data, options = {})
       client.run(function_name, encrypted_data, options)
     end
