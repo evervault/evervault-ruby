@@ -6,6 +6,7 @@ RSpec.describe Evervault do
     Evervault::Http::Request.new(
       timeout: 30,
       api_key: "testing",
+      app_uuid: "app_test"
     )
   end
   let(:intercept) do
@@ -80,6 +81,7 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
 
   before :each do 
     Evervault.api_key = "testing" 
+    Evervault.app_uuid = "app_uuid"
   end
 
   describe "test_cert_is_valid" do
