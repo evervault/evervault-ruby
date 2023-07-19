@@ -4,8 +4,8 @@ require_relative "evervault/errors/errors"
 
 module Evervault
   class << self
-    attr_accessor :api_key
     attr_accessor :app_uuid
+    attr_accessor :api_key
 
     def encrypt(data)
       client.encrypt(data)
@@ -28,17 +28,17 @@ module Evervault
     end
 
     private def client
-      if api_key.nil?
-        raise Evervault::Errors::AuthenticationError.new(
-                "Please enter your team's API Key"
-              )
-      end
       if app_uuid.nil?
         raise Evervault::Errors::AuthenticationError.new(
           "Please enter your App ID"
         )
       end
-      @client ||= Evervault::Client.new(api_key: api_key, app_uuid: app_uuid)
+      if api_key.nil?
+        raise Evervault::Errors::AuthenticationError.new(
+                "Please enter your team's API Key"
+              )
+      end
+      @client ||= Evervault::Client.new(app_uuid: app_uuid, api_key: api_key)
     end
   end
 end

@@ -7,8 +7,8 @@ RSpec.describe Evervault do
   let(:request) do
     Evervault::Http::Request.new(
       timeout: 30,
-      api_key: "testing",
-      app_uuid: "app_test"
+      app_uuid: "app_test",
+      api_key: "testing"
     )
   end
   let(:intercept) do
@@ -70,8 +70,8 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
   end
 
   before :each do 
-    Evervault.api_key = "testing" 
     Evervault.app_uuid = "app_test"
+    Evervault.api_key = "testing" 
     allow(Time).to receive(:now).and_return(Time.parse('2022-06-06'))
   end
 

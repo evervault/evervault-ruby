@@ -6,10 +6,10 @@ require_relative "../errors/error_map"
 module Evervault
   module Http
     class Request
-      def initialize(timeout:, api_key:, app_uuid:)
+      def initialize(timeout:, app_uuid:, api_key:)
         @timeout = timeout
-        @api_key = api_key
         @app_uuid = app_uuid
+        @api_key = api_key
       end
 
       def execute(method, url, params, optional_headers = {})

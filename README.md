@@ -48,9 +48,9 @@ To make Evervault available for use in your app:
 ```ruby
 require "evervault"
 
-# Initialize the client with your team's API key
-Evervault.api_key = <YOUR-API-KEY>
+# Initialize the client with your App's ID and App's API key
 Evervault.app_uuid = <YOUR-APP-ID>
+Evervault.api_key = <YOUR-API-KEY>
 
 # Encrypt your data
 encrypted_data = Evervault.encrypt({ hello: 'World!' })
