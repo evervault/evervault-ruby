@@ -13,7 +13,7 @@ module Evervault
       end
 
       def execute(method, url, params, optional_headers = {})
-        resp = faraday.public_send(method, url) do |req|
+        resp = faraday(url).public_send(method, url) do |req, url|
             req.body = params.nil? || params.empty? ? nil : params.to_json
             req.headers = build_headers(optional_headers)
             req.options.timeout = @timeout
@@ -28,9 +28,11 @@ module Evervault
 
       private
 
-      def faraday
+      def faraday(url)
         Faraday.new do |conn|
-          conn.request :authorization, :basic, @app_uuid, @api_key
+          if url.include? "/decrypt"
+            conn.request :authorization, :basic, @app_uuid, @api_key
+          end
         end
       end
 
