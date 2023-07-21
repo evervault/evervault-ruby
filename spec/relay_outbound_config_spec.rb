@@ -6,7 +6,8 @@ RSpec.describe Evervault do
   let(:request) do
     Evervault::Http::Request.new(
       timeout: 30,
-      api_key: "testing",
+      app_uuid: "app_test",
+      api_key: "testing"
     )
   end
 

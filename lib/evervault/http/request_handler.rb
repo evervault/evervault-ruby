@@ -6,70 +6,51 @@ require_relative "../errors/error_map"
 module Evervault
   module Http
     class RequestHandler
-      def initialize(request:, base_url:, cage_run_url:, cert:)
+      def initialize(request:, base_url:, cert:)
         @request = request
         @base_url = base_url
-        @cage_run_url = cage_run_url
         @cert = cert
       end
 
-      def get(path, params = nil)
+      def get(path)
         if @cert.is_certificate_expired()
           @cert.setup()
         end
-        resp = @request.execute(:get, build_url(path), params)
+        resp = @request.execute(:get, build_url(path))
         parse_json_body(resp.body)
       end
 
-      def put(path, params)
+      def put(path, body)
         if @cert.is_certificate_expired()
           @cert.setup()
         end
-        resp = @request.execute(:put, build_url(path), params)
+        resp = @request.execute(:put, build_url(path), body)
         parse_json_body(resp.body)
       end
 
-      def delete(path, params)
+      def delete(path)
         if @cert.is_certificate_expired()
           @cert.setup()
         end
-        resp = @request.execute(:delete, build_url(path), params)
+        resp = @request.execute(:delete, build_url(path))
         parse_json_body(resp.body)
       end
 
-      def post(path, params, options: {}, cage_run: false)
+      def post(path, body, optional_headers = {}, alternative_base_url = nil, basic_auth = false)
         if @cert.is_certificate_expired()
           @cert.setup()
         end
-        resp = @request.execute(:post, build_url(path, cage_run), params, build_cage_run_headers(options, cage_run))
-        parse_json_body(resp.body)
+        resp = @request.execute(:post, build_url(path, alternative_base_url), body, optional_headers, basic_auth)
+        return parse_json_body(resp.body) unless resp.body.empty?
       end
 
       private def parse_json_body(body)
         JSON.parse(body)
       end
 
-      private def build_url(path, cage_run = false)
-        return "#{@base_url}#{path}" unless cage_run
-        "#{@cage_run_url}#{path}"
-      end
-
-      private def build_cage_run_headers(options, cage_run = false)
-        optional_headers = {}
-        return optional_headers unless cage_run
-        if options.key?(:async)
-          if options[:async]
-            optional_headers["x-async"] = "true"
-          end
-          options.delete(:async)
-        end
-        if options.key?(:version)
-          if options[:version].is_a? Integer
-            optional_headers["x-version-id"] = options[:version].to_s
-          end
-          options.delete(:version)
-        end
-        optional_headers.merge(options)
+      private def build_url(path, alternative_base_url = nil)
+        return "#{@base_url}#{path}" unless alternative_base_url
+        "#{alternative_base_url}#{path}"
       end
     end
   end

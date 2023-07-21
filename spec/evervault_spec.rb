@@ -7,7 +7,8 @@ RSpec.describe Evervault do
   let(:request) do
     Evervault::Http::Request.new(
       timeout: 30,
-      api_key: "testing",
+      app_uuid: "app_test",
+      api_key: "testing"
     )
   end
   let(:intercept) do
@@ -23,7 +24,6 @@ RSpec.describe Evervault do
     Evervault::Http::RequestHandler.new(
       request: request,
       base_url: "https://api.evervault.com/", 
-      cage_run_url: "https://cage.run/", 
       cert: intercept
     ) 
   end
@@ -69,6 +69,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
   end
 
   before :each do 
+    Evervault.app_id = "app_test"
     Evervault.api_key = "testing" 
     allow(Time).to receive(:now).and_return(Time.parse('2022-06-06'))
   end
@@ -159,7 +160,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
   describe "run" do
     before do 
       allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request)
-      stub_request(:post, "https://cage.run/testing-cage").with(
+      stub_request(:post, "https://run.evervault.com/testing-cage").with(
         headers: {
           "Accept"=>"application/json",
           "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
@@ -181,7 +182,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
 
       it "makes a post request to the cage run API" do
         Evervault.run("testing-cage", { name: "testing" })
-        assert_requested(:post, "https://cage.run/testing-cage", body: { name: "testing" }, times: 1)
+        assert_requested(:post, "https://run.evervault.com/testing-cage", body: { name: "testing" }, times: 1)
       end
     end
 
@@ -191,7 +192,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
 
       it "makes a post request to the cage run API and maps the error" do
         expect { Evervault.run("testing-cage", { name: "testing" }) }.to raise_error(Evervault::Errors::BadRequestError)
-        assert_requested(:post, "https://cage.run/testing-cage", body: { name: "testing" }, times: 1)
+        assert_requested(:post, "https://run.evervault.com/testing-cage", body: { name: "testing" }, times: 1)
       end
     end
   end
@@ -199,7 +200,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
   describe "run_with_options" do
     before do
       allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request)
-      stub_request(:post, "https://cage.run/testing-cage").with(
+      stub_request(:post, "https://run.evervault.com/testing-cage").with(
         headers: {
           "Accept"=>"application/json",
           "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
@@ -222,7 +223,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
 
       it "makes an async cage run request" do
         Evervault.run("testing-cage", { name: "testing" }, { async: true })
-        assert_requested(:post, "https://cage.run/testing-cage", body: { name: "testing" }, times: 1)
+        assert_requested(:post, "https://run.evervault.com/testing-cage", body: { name: "testing" }, times: 1)
       end
     end
   end

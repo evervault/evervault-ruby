@@ -5,7 +5,8 @@ RSpec.describe Evervault do
   let(:request) do
     Evervault::Http::Request.new(
       timeout: 30,
-      api_key: "testing",
+      app_uuid: "app_test",
+      api_key: "testing"
     )
   end
   let(:intercept) do
@@ -21,7 +22,6 @@ RSpec.describe Evervault do
     Evervault::Http::RequestHandler.new(
       request: request,
       base_url: "https://api.evervault.com/", 
-      cage_run_url: "https://cage.run/", 
       cert: intercept
     ) 
   end
@@ -49,6 +49,7 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
 -----END CERTIFICATE-----"
   end
   before :each do 
+    Evervault.app_id= "app_test"
     Evervault.api_key = "testing" 
   end
 
@@ -119,7 +120,7 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
            }).
          to_return(status: 200, body: "{}", headers: {})
       expect(intercept).to receive(:setup)
-      request_handler.delete("cages", {})
+      request_handler.delete("cages")
     end
   end
 end
