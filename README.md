@@ -49,11 +49,14 @@ To make Evervault available for use in your app:
 require "evervault"
 
 # Initialize the client with your App's ID and App's API key
-Evervault.app_uuid = <YOUR-APP-ID>
+Evervault.app_id = <YOUR-APP-ID>
 Evervault.api_key = <YOUR-API-KEY>
 
 # Encrypt your data
-encrypted_data = Evervault.encrypt({ hello: 'World!' })
+encrypted_data = Evervault.encrypt('Hello World!')
+
+# Decrypt your data
+decrypted = Evervault.decrypt(encrypted_data)
 
 # Process the encrypted data using a Function
 result = Evervault.run(<FUNCTION-NAME>, encrypted_data)
@@ -67,8 +70,6 @@ http = Net::HTTP.new(uri.host, uri.port)
 http.use_ssl = true
 res = http.request(req)
 
-# Decrypt your data
-decrypted = Evervault.decrypt({ encrypted: encrypted_data })
 ```
 
 ## Reference
@@ -83,25 +84,26 @@ The Evervault Ruby SDK exposes four methods.
 Evervault.encrypt(data = String | Number | Boolean | Hash | Array)
 ```
 
-| Parameter | Type | Description |
-| --------- | ---- | ----------- |
-| data | `String`, `Number`, `Boolean`, `Hash`, `Array` | Data to be encrypted |
+| Parameter | Type                                           | Description          |
+| --------- | ---------------------------------------------- | -------------------- |
+| data      | `String`, `Number`, `Boolean`, `Hash`, `Array` | Data to be encrypted |
 
 ### Evervault.decrypt
 
-`Evervault.decrypt` decrypts the data previously encrypted with the `Evervault.encrypt` function or through Relay.
+`Evervault.decrypt` decrypts data previously encrypted with the `encrypt()` function or through Evervault's Relay (Evervault's encryption proxy).
+An API Key with the `decrypt` permission must be used to perform this operation.
 
 ```ruby
-Evervault.decrypt(data = Hash)
+Evervault.decrypt(data = String | Array | Hash)
 ```
 
-| Parameter | Type   | Description          |
-| --------- | ------ | -------------------- |
-| data      | `Hash` | Data to be decrypted |
+| Parameter | Type                      | Description          |
+| --------- | ------------------------- | -------------------- |
+| data      | `String`, `Array`, `Hash` | Data to be decrypted |
 
 ### Evervault.enable_outbound_relay
 
-`Evervault.enable_outbound_relay` configures your application to proxy HTTP requests using Outbound Relay based on the configuration created in the Evervault UI. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more.  
+`Evervault.enable_outbound_relay` configures your application to proxy HTTP requests using Outbound Relay based on the configuration created in the Evervault UI. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more.
 
 ```ruby
 Evervault.enable_outbound_relay([decryption_domains = Array])
@@ -114,6 +116,7 @@ Evervault.enable_outbound_relay([decryption_domains = Array])
 ### Evervault.run
 
 `Evervault.run` invokes a Function with a given payload.
+An API Key with the `run Function` permission must be used to perform this operation.
 
 ```ruby
 Evervault.run(function_name = String, data = Hash[, options = Hash])
@@ -135,6 +138,7 @@ Evervault.run(function_name = String, data = Hash[, options = Hash])
 ### Evervault.create_run_token
 
 `Evervault.create_run_token` creates a single use, time bound token for invoking a Function.
+An API Key with the `create Run Token` permission must be used to perform this operation.
 
 ```ruby
 Evervault.create_run_token(function_name = String, data = Hash)

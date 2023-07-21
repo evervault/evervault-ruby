@@ -12,10 +12,10 @@ module Evervault
         @api_key = api_key
       end
 
-      def execute(method, url, params, optional_headers = {})
-        resp = faraday(url).public_send(method, url) do |req, url|
-            req.body = params.nil? || params.empty? ? nil : params.to_json
-            req.headers = build_headers(optional_headers)
+      def execute(method, url, body = nil, optional_headers = {}, basic_auth = false)
+        resp = faraday(basic_auth).public_send(method, url) do |req, url|
+            req.body = body.nil? || body.empty? ? nil : body.to_json
+            req.headers = build_headers(optional_headers, basic_auth)
             req.options.timeout = @timeout
         end
 
@@ -28,22 +28,30 @@ module Evervault
 
       private
 
-      def faraday(url)
+      def faraday(basic_auth = false)
         Faraday.new do |conn|
-          if url.include? "/decrypt"
+          if basic_auth
             conn.request :authorization, :basic, @app_uuid, @api_key
           end
         end
       end
 
-      def build_headers(optional_headers)
-        optional_headers.merge({
+      def build_headers(optional_headers = {}, basic_auth = false)
+        headers = {
           "AcceptEncoding": "gzip, deflate",
           "Accept": "application/json",
           "Content-Type": "application/json",
           "User-Agent": "evervault-ruby/#{VERSION}",
-          "Api-Key": @api_key,
-        })
+        }
+        unless optional_headers.nil? || optional_headers.empty?
+          headers = headers.merge(optional_headers)
+        end
+        if !basic_auth
+          headers = headers.merge({
+            "Api-Key": @api_key,
+          })
+        end
+        headers
       end
     end
   end

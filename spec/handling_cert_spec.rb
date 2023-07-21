@@ -80,7 +80,7 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
   end
 
   before :each do 
-    Evervault.app_uuid = "app_uuid"
+    Evervault.app_id = "app_uuid"
     Evervault.api_key = "testing" 
   end
 
