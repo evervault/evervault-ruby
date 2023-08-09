@@ -29,7 +29,7 @@ module Evervault
       client.create_run_token(function_name, data)
     end
 
-    def create_client_side_decrypt_token(data = nil, expiry = nil)
+    def create_client_side_decrypt_token(data, expiry = nil)
       if expiry != nil
         expiry = (expiry.to_f * 1000).to_i
       end

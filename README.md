@@ -112,7 +112,7 @@ Evervault.create_client_side_decrypt_token(encrypted_data, time_in_five_minutes)
 
 | Parameter | Type                      | Description                                                                                                                        |
 | --------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| data      | `String`, `Array`, `Hash` | Optional -- The payload the token should be able to decrypt. If not supplied, the token can be used to decrypt any payload         |
+| data      | `String`, `Array`, `Hash` | The payload the token can be used to decrypt.                                                                                      |
 | expiry    | `Time`                    | Optional -- The time the token should expire. The max expiry is 10 minutes in the future. If not supplied it defaults to 5 minutes |
 
 
