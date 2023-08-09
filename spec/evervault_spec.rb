@@ -232,6 +232,48 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
     expect(Evervault::VERSION).not_to be nil
   end
 
+  describe "create_client_side_decrypt_token" do
+    before do
+      allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request)
+      stub_request(:post, "https://api.evervault.com/client-side-tokens").with(
+        headers: {
+          "Accept"=>"application/json",
+          "Authorization"=>"Basic YXBwX3Rlc3Q6dGVzdGluZw==",
+          "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+          "Acceptencoding"=>"gzip, deflate",
+          "Content-Type"=>"application/json",
+          "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}",
+        },
+        body: {
+          payload: "test",
+          expiry: 1691596854000,
+          action: "decrypt:api"
+        }.to_json
+      ).to_return({ status: status, body: response.to_json })
+    end
+
+    context "success" do
+      let(:response) { { token: "token1234567890", expiry: 1691596854000 }}
+      let(:status) { 200 }
+
+      it "makes a post request to the API" do
+        Evervault.create_client_side_decrypt_token("test", Time.parse('2023-08-09 16:00:54 +0000'))
+        assert_requested(:post, "https://api.evervault.com/client-side-tokens", body: { action: "decrypt:api", payload: "test", expiry: 1691596854000 }, times: 1)
+      end
+    end
+
+    context "failure" do
+      let(:response) { { "Error" => "Bad request" } }
+      let(:status) { 400 }
+
+      it "makes a post request to the API and maps the error" do
+        expect { Evervault.create_client_side_decrypt_token("test", Time.parse('2023-08-09 16:00:54 +0000')) }.to raise_error(Evervault::Errors::BadRequestError)
+        assert_requested(:post, "https://api.evervault.com/client-side-tokens", body: { action: 'decrypt:api', payload: 'test', expiry: 1691596854000 }, times: 1)
+      end
+    end
+  end
+
+
   describe "create_run_token" do
     before do 
       allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request)
