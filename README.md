@@ -101,6 +101,21 @@ Evervault.decrypt(data = String | Array | Hash)
 | --------- | ------------------------- | -------------------- |
 | data      | `String`, `Array`, `Hash` | Data to be decrypted |
 
+### Evervault.create_client_side_decrypt_token
+`Evervault.create_client_side_token` is used to generate a time-bound token that can be used by front-end applications to decrypt Evervault encrypted data. 
+
+```ruby
+time_now = Time.now
+time_in_five_minutes = time_now + 300
+Evervault.create_client_side_decrypt_token(encrypted_data, time_in_five_minutes)
+```
+
+| Parameter | Type                      | Description                                                                                                                        |
+| --------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| data      | `String`, `Array`, `Hash` | Optional -- The payload the token should be able to decrypt. If not supplied, the token can be used to decrypt any payload         |
+| expiry    | `Time`                    | Optional -- The time the token should expire. The max expiry is 10 minutes in the future. If not supplied it defaults to 5 minutes |
+
+
 ### Evervault.enable_outbound_relay
 
 `Evervault.enable_outbound_relay` configures your application to proxy HTTP requests using Outbound Relay based on the configuration created in the Evervault UI. See [Outbound Relay](https://docs.evervault.com/concepts/outbound-relay/overview) to learn more.
