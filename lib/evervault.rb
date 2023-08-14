@@ -33,7 +33,7 @@ module Evervault
       if expiry != nil
         expiry = (expiry.to_f * 1000).to_i
       end
-      client.create_token("decrypt:api", data, expiry)
+      client.create_token("api:decrypt", data, expiry)
     end
 
     private def client

@@ -247,7 +247,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
         body: {
           payload: "test",
           expiry: 1691596854000,
-          action: "decrypt:api"
+          action: "api:decrypt"
         }.to_json
       ).to_return({ status: status, body: response.to_json })
     end
@@ -258,7 +258,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
 
       it "makes a post request to the API" do
         Evervault.create_client_side_decrypt_token("test", Time.parse('2023-08-09 16:00:54 +0000'))
-        assert_requested(:post, "https://api.evervault.com/client-side-tokens", body: { action: "decrypt:api", payload: "test", expiry: 1691596854000 }, times: 1)
+        assert_requested(:post, "https://api.evervault.com/client-side-tokens", body: { action: "api:decrypt", payload: "test", expiry: 1691596854000 }, times: 1)
       end
     end
 
@@ -268,7 +268,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
 
       it "makes a post request to the API and maps the error" do
         expect { Evervault.create_client_side_decrypt_token("test", Time.parse('2023-08-09 16:00:54 +0000')) }.to raise_error(Evervault::Errors::BadRequestError)
-        assert_requested(:post, "https://api.evervault.com/client-side-tokens", body: { action: 'decrypt:api', payload: 'test', expiry: 1691596854000 }, times: 1)
+        assert_requested(:post, "https://api.evervault.com/client-side-tokens", body: { action: 'api:decrypt', payload: 'test', expiry: 1691596854000 }, times: 1)
       end
     end
   end
