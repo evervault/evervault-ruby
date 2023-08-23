@@ -45,6 +45,11 @@ module Evervault
       response["data"]
     end
 
+    def create_token(action, data, expiry = nil)
+      payload = { payload: data, expiry: expiry, action: action }
+      @request_handler.post("client-side-tokens", payload, nil, nil, true)
+    end
+
     def run(function_name, payload, options = {})
       optional_headers = {}
       if options.key?(:async)
