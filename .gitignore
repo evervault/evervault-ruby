@@ -10,6 +10,7 @@ Gemfile.lock
 
 # rspec failure tracking
 .rspec_status
+.rspec_status_e2e
 
 # rbenv
 .ruby_version
