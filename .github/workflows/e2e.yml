@@ -1,4 +1,4 @@
-name: evervault-unit-tests
+name: evervault-e2e-tests
 on: [push]
 
 jobs:
@@ -16,4 +16,9 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
       - run: bundle install
-      - run: bundle exec rake unit_tests
+      - run: bundle exec rake e2e_tests
+        env:
+          EVERVAULT_APP_UUID: ${{ secrets.EVERVAULT_APP_UUID }}
+          EVERVAULT_API_KEY: ${{ secrets.EVERVAULT_API_KEY }}
+          EVERVAULT_FUNCTION_NAME: ${{ secrets.EVERVAULT_FUNCTION_NAME }}
+          EVERVAULT_SYNTHETIC_ENDPOINT_URL: ${{ secrets.EVERVAULT_SYNTHETIC_ENDPOINT_URL }}
