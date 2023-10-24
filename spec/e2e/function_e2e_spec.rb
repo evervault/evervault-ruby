@@ -35,6 +35,7 @@ RSpec.describe Evervault do
       app_uuid = ENV["EVERVAULT_APP_UUID"]
       api_key = ENV["EVERVAULT_API_KEY"]
       function_name = ENV["EVERVAULT_FUNCTION_NAME"]
+      initialisation_error_function_name = ENV["EVERVAULT_INITIALIZATION_ERROR_FUNCTION_NAME"]
       Evervault.app_id = app_uuid
       Evervault.api_key = api_key
       
@@ -42,6 +43,14 @@ RSpec.describe Evervault do
         encryptResult = Evervault.encrypt(payload)
         function_run_result = Evervault.run(function_name, payload)
         expect(function_run_result["result"]).to eq(expected_response)
+      end
+      
+      it "should run a function and catch user errors" do
+        expect { Evervault.run(function_name, { "shouldError" => true }) }.to raise_error(Evervault::Errors::FunctionRuntimeError)
+      end
+      
+      it "should run a function and catch initialization errors" do
+        expect { Evervault.run(initialisation_error_function_name, { }) }.to raise_error(Evervault::Errors::FunctionRuntimeError)
       end
 
       it "should create a run token" do
