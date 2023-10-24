@@ -10,6 +10,8 @@ module Evervault
 
     class AuthenticationError < EvervaultError; end
 
+    class ForbiddenError < EvervaultError; end
+
     class ServerError < EvervaultError; end
 
     class BadGatewayError < EvervaultError; end
@@ -28,6 +30,26 @@ module Evervault
 
     class UnsupportedEncryptType < EvervaultError; end
 
-    class ForbiddenIPError < EvervaultError; end
+    class DecryptionError < EvervaultError; end
+
+    class FunctionError < EvervaultError; end
+
+    class ForbiddenIPError < FunctionError; end
+
+    class FunctionTimeoutError < FunctionError; end
+
+    class FunctionNotReadyError < FunctionError; end
+
+    class FunctionRuntimeError < FunctionError
+      attr_reader :message, :stack, :id
+    
+      def initialize(message, stack, id)
+        @message = message
+        @stack = stack
+        @id = id
+        super("#{message}")
+      end
+    end
+
   end
 end

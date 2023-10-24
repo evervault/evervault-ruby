@@ -134,21 +134,13 @@ Evervault.enable_outbound_relay([decryption_domains = Array])
 An API Key with the `run Function` permission must be used to perform this operation.
 
 ```ruby
-Evervault.run(function_name = String, data = Hash[, options = Hash])
+Evervault.run(function_name = String, data = Hash)
 ```
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | function_name | String | Name of the Function to be run |
 | data | Hash | Payload for the Function |
-| options | Hash | [Options for the Function run](#Function-Run-Options) |
-
-#### Function Run Options
-
-| Option | Type | Default | Description |
-| ------ | ---- | ------- | ----------- |
-| `async` | `Boolean` | `false` | Run your Function in async mode. Async Function runs will be queued for processing. |
-| `version` | `Integer` | `nil` | Specify the version of your Function to run. By default, the latest version will be run. |
 
 ### Evervault.create_run_token
 

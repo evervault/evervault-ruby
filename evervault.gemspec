@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jonny O'Mahony"]
   spec.email         = ["jonny@evervault.com"]
 
-  spec.summary       = %q{Ruby SDK to run Evervault Cages}
+  spec.summary       = %q{Ruby SDK to run Evervault}
   spec.homepage      = "https://evervault.com"
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")

@@ -160,70 +160,61 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
   describe "run" do
     before do 
       allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request)
-      stub_request(:post, "https://run.evervault.com/testing-cage").with(
+      stub_request(:post, "https://api.evervault.com/functions/testing-function/runs").with(
         headers: {
           "Accept"=>"application/json",
           "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
           "Acceptencoding"=>"gzip, deflate",
-          "Api-Key"=>"testing",
+          "Authorization"=>"Basic YXBwX3Rlc3Q6dGVzdGluZw==",
           "Content-Type"=>"application/json",
           "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}"
           },
           body: {
-            name: "testing"
+            payload: { name: "testing" }
           }.to_json
         )
            .to_return({ status: status, body: response.to_json }) 
     end
 
     context "success" do
-      let(:response) { { "result"=>{"message"=>"Hello, world!", "details"=>"Please send an encrypted `name` parameter to show cage decryption in action"}, "runId"=>"5428800061ff" } }
+      let(:response) { {
+        "id": "func_run_b470a269a369",
+        "result": {"test": "data"},
+        "status": "success",
+      } }
       let(:status) { 200 }
 
-      it "makes a post request to the cage run API" do
-        Evervault.run("testing-cage", { name: "testing" })
-        assert_requested(:post, "https://run.evervault.com/testing-cage", body: { name: "testing" }, times: 1)
+      it "makes a post function run request to the API" do
+        Evervault.run("testing-function", { name: "testing" })
+        assert_requested(:post, "https://api.evervault.com/functions/testing-function/runs", body: { payload: { name: "testing" } }, times: 1)
       end
     end
 
-    context "failure" do
-      let(:response) { { "Error" => "Bad request"} }
+    context "user error" do
+      let(:response) { {
+        "error" => {"message"=> "Uh oh!", "stack"=> "Error: Uh oh!..."},
+        "id"=> "func_run_e4f1d8d83ec0",
+        "status"=> "failure",
+      } }
+      let(:status) { 200 }
+
+      it "makes a post function run request to the API" do
+        expect { Evervault.run("testing-function", { name: "testing" }) }.to raise_error(Evervault::Errors::FunctionRuntimeError)
+        assert_requested(:post, "https://api.evervault.com/functions/testing-function/runs", body: { payload: { name: "testing" } }, times: 1)
+      end
+    end
+
+    context "error" do
+      let(:response) { {
+        "status": 400,
+        "code": "invalid-request",
+        "title": "InvalidRequest",
+        "detail": "Bad request!",
+      } }
       let(:status) { 400 }
-
-      it "makes a post request to the cage run API and maps the error" do
-        expect { Evervault.run("testing-cage", { name: "testing" }) }.to raise_error(Evervault::Errors::BadRequestError)
-        assert_requested(:post, "https://run.evervault.com/testing-cage", body: { name: "testing" }, times: 1)
-      end
-    end
-  end
-
-  describe "run_with_options" do
-    before do
-      allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request)
-      stub_request(:post, "https://run.evervault.com/testing-cage").with(
-        headers: {
-          "Accept"=>"application/json",
-          "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
-          "Acceptencoding"=>"gzip, deflate",
-          "Api-Key"=>"testing",
-          "Content-Type"=>"application/json",
-          "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}",
-          "x-async"=>"true"
-          },
-          body: {
-            name: "testing"
-          }.to_json
-        )
-        .to_return({ status: status, body: response.to_json })
-    end
-
-    context "success with options" do
-      let(:response) { { "result" =>{ "status" => "queued" } } }
-      let(:status) { 202 }
-
-      it "makes an async cage run request" do
-        Evervault.run("testing-cage", { name: "testing" }, { async: true })
-        assert_requested(:post, "https://run.evervault.com/testing-cage", body: { name: "testing" }, times: 1)
+      it "makes a post request to the API and maps the error" do
+        expect { Evervault.run("testing-function", { name: "testing" }) }.to raise_error(Evervault::Errors::BadRequestError)
+        assert_requested(:post, "https://api.evervault.com/functions/testing-function/runs", body: { payload: { name: "testing" } }, times: 1)
       end
     end
   end
@@ -263,9 +254,13 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
     end
 
     context "failure" do
-      let(:response) { { "Error" => "Bad request" } }
+      let(:response) { {
+        "status": 400,
+        "code": "invalid-request",
+        "title": "InvalidRequest",
+        "detail": "Bad request!",
+      } }
       let(:status) { 400 }
-
       it "makes a post request to the API and maps the error" do
         expect { Evervault.create_client_side_decrypt_token("test", Time.parse('2023-08-09 16:00:54 +0000')) }.to raise_error(Evervault::Errors::BadRequestError)
         assert_requested(:post, "https://api.evervault.com/client-side-tokens", body: { action: 'api:decrypt', payload: 'test', expiry: 1691596854000 }, times: 1)
@@ -277,7 +272,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
   describe "create_run_token" do
     before do 
       allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request)
-      stub_request(:post, "https://api.evervault.com/v2/functions/testing-cage/run-token").with(
+      stub_request(:post, "https://api.evervault.com/v2/functions/testing-function/run-token").with(
         headers: {
           "Accept"=>"application/json",
           "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
@@ -297,8 +292,8 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
       let(:status) { 200 }
 
       it "makes a post request to the API" do
-        Evervault.create_run_token("testing-cage", { name: "testing" })
-        assert_requested(:post, "https://api.evervault.com/v2/functions/testing-cage/run-token", body: { name: "testing" }, times: 1)
+        Evervault.create_run_token("testing-function", { name: "testing" })
+        assert_requested(:post, "https://api.evervault.com/v2/functions/testing-function/run-token", body: { name: "testing" }, times: 1)
       end
     end
 
@@ -307,8 +302,8 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
       let(:status) { 400 }
 
       it "makes a post request to the API and maps the error" do
-        expect { Evervault.create_run_token("testing-cage", { name: "testing" }) }.to raise_error(Evervault::Errors::BadRequestError)
-        assert_requested(:post, "https://api.evervault.com/v2/functions/testing-cage/run-token", body: { name: "testing" }, times: 1)
+        expect { Evervault.create_run_token("testing-function", { name: "testing" }) }.to raise_error(Evervault::Errors::BadRequestError)
+        assert_requested(:post, "https://api.evervault.com/v2/functions/testing-function/run-token", body: { name: "testing" }, times: 1)
       end
     end
   end

@@ -35,7 +35,7 @@ module Evervault
       end
 
       private def get_relay_outbound_config
-        resp = @request.execute(:get, "#{@base_url}#{RELAY_OUTBOUND_CONFIG_API_ENDPOINT}", nil)
+        resp = @request.execute(:get, "#{@base_url}#{RELAY_OUTBOUND_CONFIG_API_ENDPOINT}")
         poll_interval = resp.headers["x-poll-interval"]
         unless poll_interval.nil?
           update_poll_interval(poll_interval.to_f)
