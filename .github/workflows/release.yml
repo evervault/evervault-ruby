@@ -1,39 +1,65 @@
-name: Publish Gem
+name: Release
 
 on:
   push:
-    tags:
-      - v*
+    branches:
+      - "master"
 
 jobs:
-  test:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu, macos]
-        ruby: [2.6, 2.7, 3.1, truffleruby]
-    runs-on: ${{ matrix.os }}-latest
-    continue-on-error: ${{ endsWith(matrix.ruby, 'head') || matrix.ruby == 'debug' }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-      - run: bundle install
-      - run: bundle exec rake
-
-  build:
+  run-tests:
     runs-on: ubuntu-latest
-    needs: test
-    
     steps:
-      - uses: actions/checkout@v2
-      - uses: ruby/setup-ruby@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Get tags
+        run: git fetch --tags origin
+
+      - name: Install Node Dependencies
+        run: |
+          npm install
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7
-      - name: Release Gem
-        if: contains(github.ref, 'refs/tags/v')
-        run: ./scripts/release.sh
+    
+      - name: Create Release Pull Request
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          title: 'New Release'
+          commit: 'Release new version'
+          version: npm run version
         env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    
+      - name: Create new release
+        if: steps.changesets.outputs.hasChangesets == 'false'
+        run: |
+          npx changeset tag && git push origin --tags
+          COMMIT_TAG=$(git tag --points-at HEAD)
+          if [ -n "$COMMIT_TAG" ]; then
+            echo "A tag is attached to HEAD. Creating a new release..."
+            echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+            CHANGELOG=$(awk '
+              BEGIN { recording=0; }
+              /^## / {
+                  if(recording) { exit; }
+                  recording=1;
+                  next;
+              }
+              recording {
+                  print;
+              }
+            ' CHANGELOG.md)
+            gh release create $COMMIT_TAG -t "$COMMIT_TAG" -n "$CHANGELOG"
+            sh ./scripts/release.sh
+          else
+            echo "No tag attached to HEAD. No new release needed."
+          fi
+        env:
           RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
