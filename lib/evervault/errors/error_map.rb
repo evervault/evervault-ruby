@@ -4,44 +4,39 @@ module Evervault
   module Errors
     class ErrorMap
       def self.raise_errors_on_failure(status_code, body, headers)
-        return if status_code < 400
-        case status_code
-        when 404
-          raise ResourceNotFoundError.new("Resource Not Found")
-        when 400
-          raise BadRequestError.new("Bad request")
-        when 401
-          raise AuthenticationError.new("Unauthorized")
-        when 403
-          if (headers.include? "x-evervault-error-code") && (headers["x-evervault-error-code"] == "forbidden-ip-error")
-            raise ForbiddenIPError.new("IP is not present in Cage whitelist")
-          else
-            raise AuthenticationError.new("Forbidden")
-          end
-        when 500
-          raise ServerError.new("Server Error")
-        when 502
-          raise BadGatewayError.new("Bad Gateway Error")
-        when 503
-          raise ServiceUnavailableError.new("Service Unavailable")
+        parsed_body = JSON.parse(body)
+        code = parsed_body["code"]
+        detail = parsed_body["detail"]
+
+        if code == "unauthorized"
+          raise AuthenticationError.new(detail)
+        elsif code == "forbidden"
+          raise ForbiddenError.new(detail)
+        elsif code == "unprocessable-content"
+          raise DecryptionError.new(detail)
+        elsif code == "invalid-request"
+          raise BadRequestError.new(detail)
+        elsif code == "functions/request-timeout"
+          raise FunctionTimeoutError.new(detail)
+        elsif code == "functions/function-not-ready"
+          raise FunctionNotReadyError.new(detail)
+        elsif code == "functions/forbidden-ip"
+          raise ForbiddenIPError.new(detail)
         else
-          raise UnexpectedError.new(
-                  self.message_for_unexpected_error_without_type(body)
-                )
+          raise EvervaultError.new(detail)
         end
       end
 
-      private def message_for_unexpected_error_without_type(error_details)
-        if error_details.nil?
-          return(
-            "An unexpected error occurred without message or status code. Please contact Evervault support"
-          )
+      def self.raise_function_error_on_failure(body)
+        error = body["error"]
+        if error
+          message = error["message"]
+          stack = error["stack"]
+          id = body["id"]
+          raise FunctionRuntimeError.new(message, stack, id)
+        else
+          raise EvervaultError.new("An unexpected error occurred. Please contact Evervault support")
         end
-        message = error_details["message"]
-        status_code = error_details["statusCode"]
-        "An unexpected error occured. It occurred with the message: #{
-          message
-        } and http_code: '#{status_code}'. Please contact Evervault support"
       end
     end
   end

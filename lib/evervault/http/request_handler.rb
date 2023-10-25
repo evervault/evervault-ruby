@@ -36,11 +36,11 @@ module Evervault
         parse_json_body(resp.body)
       end
 
-      def post(path, body, optional_headers = {}, alternative_base_url = nil, basic_auth = false)
+      def post(path, body, basic_auth = false, error_map = Evervault::Errors::LegacyErrorMap)
         if @cert.is_certificate_expired()
           @cert.setup()
         end
-        resp = @request.execute(:post, build_url(path, alternative_base_url), body, optional_headers, basic_auth)
+        resp = @request.execute(:post, build_url(path), body, basic_auth, error_map)
         return parse_json_body(resp.body) unless resp.body.empty?
       end
 
@@ -48,9 +48,8 @@ module Evervault
         JSON.parse(body)
       end
 
-      private def build_url(path, alternative_base_url = nil)
-        return "#{@base_url}#{path}" unless alternative_base_url
-        "#{alternative_base_url}#{path}"
+      private def build_url(path)
+        return "#{@base_url}#{path}"
       end
     end
   end

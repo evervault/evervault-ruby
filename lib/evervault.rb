@@ -17,8 +17,8 @@ module Evervault
       client.decrypt(data)
     end
 
-    def run(function_name, encrypted_data, options = {})
-      client.run(function_name, encrypted_data, options)
+    def run(function_name, encrypted_data)
+      client.run(function_name, encrypted_data)
     end
 
     def enable_outbound_relay(decryption_domains = nil)
