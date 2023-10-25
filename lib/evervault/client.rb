@@ -35,7 +35,7 @@ module Evervault
 
     def decrypt(data)
       unless data.is_a?(String) || data.is_a?(Array) || data.is_a?(Hash)
-        raise Evervault::Errors::ArgumentError.new("data is of invalid type")
+        raise Evervault::Errors::EvervaultError.new("data is of invalid type")
       end
       payload = { data: data }
       response = @request_handler.post("decrypt", payload, true, Evervault::Errors::ErrorMap)

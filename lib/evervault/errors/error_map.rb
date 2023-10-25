@@ -8,15 +8,7 @@ module Evervault
         code = parsed_body["code"]
         detail = parsed_body["detail"]
 
-        if code == "unauthorized"
-          raise AuthenticationError.new(detail)
-        elsif code == "forbidden"
-          raise ForbiddenError.new(detail)
-        elsif code == "unprocessable-content"
-          raise DecryptionError.new(detail)
-        elsif code == "invalid-request"
-          raise BadRequestError.new(detail)
-        elsif code == "functions/request-timeout"
+        if code == "functions/request-timeout"
           raise FunctionTimeoutError.new(detail)
         elsif code == "functions/function-not-ready"
           raise FunctionNotReadyError.new(detail)
