@@ -135,8 +135,8 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
       end
       test_instance = MyTestClass.new()
       list = ["a", 1, test_instance]
-      expect { Evervault.encrypt(test_instance) }.to raise_error(Evervault::Errors::UnsupportedEncryptType)
-      expect { Evervault.encrypt(list) }.to raise_error(Evervault::Errors::UnsupportedEncryptType)
+      expect { Evervault.encrypt(test_instance) }.to raise_error(Evervault::Errors::EvervaultError)
+      expect { Evervault.encrypt(list) }.to raise_error(Evervault::Errors::EvervaultError)
     end
 
   end
@@ -213,7 +213,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
       } }
       let(:status) { 400 }
       it "makes a post request to the API and maps the error" do
-        expect { Evervault.run("testing-function", { name: "testing" }) }.to raise_error(Evervault::Errors::BadRequestError)
+        expect { Evervault.run("testing-function", { name: "testing" }) }.to raise_error(Evervault::Errors::EvervaultError)
         assert_requested(:post, "https://api.evervault.com/functions/testing-function/runs", body: { payload: { name: "testing" } }, times: 1)
       end
     end
@@ -262,7 +262,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
       } }
       let(:status) { 400 }
       it "makes a post request to the API and maps the error" do
-        expect { Evervault.create_client_side_decrypt_token("test", Time.parse('2023-08-09 16:00:54 +0000')) }.to raise_error(Evervault::Errors::BadRequestError)
+        expect { Evervault.create_client_side_decrypt_token("test", Time.parse('2023-08-09 16:00:54 +0000')) }.to raise_error(Evervault::Errors::EvervaultError)
         assert_requested(:post, "https://api.evervault.com/client-side-tokens", body: { action: 'api:decrypt', payload: 'test', expiry: 1691596854000 }, times: 1)
       end
     end
@@ -302,7 +302,7 @@ Gu2q1tR9TzpXYZ+Yv1/YUApnryI8Dbd2azpYW4obHvGOFS1bxNQ3waqmx51ig45S
       let(:status) { 400 }
 
       it "makes a post request to the API and maps the error" do
-        expect { Evervault.create_run_token("testing-function", { name: "testing" }) }.to raise_error(Evervault::Errors::BadRequestError)
+        expect { Evervault.create_run_token("testing-function", { name: "testing" }) }.to raise_error(Evervault::Errors::EvervaultError)
         assert_requested(:post, "https://api.evervault.com/v2/functions/testing-function/run-token", body: { name: "testing" }, times: 1)
       end
     end

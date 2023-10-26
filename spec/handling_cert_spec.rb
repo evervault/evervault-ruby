@@ -134,7 +134,7 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
             "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}"
           }).
         to_return({ status: 200, body: ""})
-      expect { intercept.setup() }.to raise_error(Evervault::Errors::CertDownloadError)
+      expect { intercept.setup() }.to raise_error(Evervault::Errors::EvervaultError)
       expect(intercept.is_certificate_expired()).to be false
     end
   end

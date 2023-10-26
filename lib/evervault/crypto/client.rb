@@ -22,11 +22,11 @@ module Evervault
       end
 
       def encrypt(data)
-        raise Evervault::Errors::UndefinedDataError.new(
+        raise Evervault::Errors::EvervaultError.new(
           "Data is required for encryption"
         ) if data.nil? || (data.instance_of?(String) && data.empty?)
 
-        raise Evervault::Errors::UnsupportedEncryptType.new(
+        raise Evervault::Errors::EvervaultError.new(
           "Encryption is not supported for #{data.class}"
         ) if !(encryptable_data?(data) || data.instance_of?(Hash) || data.instance_of?(Array))
           
@@ -64,7 +64,7 @@ module Evervault
           encrypted_data = data.map { |value| traverse_and_encrypt(value) }
           return encrypted_data
         else
-          raise Evervault::Errors::UnsupportedEncryptType.new(
+          raise Evervault::Errors::EvervaultError.new(
             "Encryption is not supported for #{data.class}"
           )
         end

@@ -128,7 +128,7 @@ module Evervault
         end
 
         if !ca_content || ca_content == ""
-          raise Evervault::Errors::CertDownloadError.new("Unable to install the Evervault root certificate from #{@ca_host}")
+          raise Evervault::Errors::EvervaultError.new("Unable to install the Evervault root certificate from #{@ca_host}")
         end
 
         cert = OpenSSL::X509::Certificate.new ca_content

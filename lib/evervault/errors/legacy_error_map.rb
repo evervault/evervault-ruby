@@ -7,25 +7,25 @@ module Evervault
         return if status_code < 400
         case status_code
         when 404
-          raise ResourceNotFoundError.new("Resource Not Found")
+          raise EvervaultError.new("Resource not found")
         when 400
-          raise BadRequestError.new("Bad request")
+          raise EvervaultError.new("Bad request")
         when 401
-          raise AuthenticationError.new("Unauthorized")
+          raise EvervaultError.new("Unauthorized")
         when 403
           if (headers.include? "x-evervault-error-code") && (headers["x-evervault-error-code"] == "forbidden-ip-error")
             raise ForbiddenIPError.new("IP is not present in Cage whitelist")
           else
-            raise AuthenticationError.new("Forbidden")
+            raise EvervaultError.new("Forbidden")
           end
         when 500
-          raise ServerError.new("Server Error")
+          raise EvervaultError.new("Server error")
         when 502
-          raise BadGatewayError.new("Bad Gateway Error")
+          raise EvervaultError.new("Bad gateway error")
         when 503
-          raise ServiceUnavailableError.new("Service Unavailable")
+          raise EvervaultError.new("Service unavailable")
         else
-          raise UnexpectedError.new(
+          raise EvervaultError.new(
                   self.message_for_unexpected_error_without_type(body)
                 )
         end
