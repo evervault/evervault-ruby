@@ -1,3 +1,11 @@
+require 'simplecov'
+SimpleCov.start do
+  add_filter '/spec/' 
+end
+
+require 'dotenv'
+Dotenv.load
+
 require "bundler/setup"
 require "evervault"
 require "rspec"
