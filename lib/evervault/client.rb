@@ -29,8 +29,8 @@ module Evervault
       @intercept.setup()
     end
 
-    def encrypt(data)
-      @crypto_client.encrypt(data)
+    def encrypt(data, role)
+      @crypto_client.encrypt(data, role)
     end
 
     def decrypt(data)
