@@ -1,9 +1,9 @@
-require_relative "http/request"
-require_relative "http/request_handler"
-require_relative "http/request_intercept"
-require_relative "http/relay_outbound_config"
-require_relative "threading/repeated_timer"
-require_relative "crypto/client"
+require_relative 'http/request'
+require_relative 'http/request_handler'
+require_relative 'http/request_intercept'
+require_relative 'http/relay_outbound_config'
+require_relative 'threading/repeated_timer'
+require_relative 'crypto/client'
 
 module Evervault
   class Client
@@ -12,9 +12,9 @@ module Evervault
     def initialize(
       app_uuid:,
       api_key:,
-      base_url: "https://api.evervault.com/",
-      relay_url: "https://relay.evervault.com:8443",
-      ca_host: "https://ca.evervault.com",
+      base_url: 'https://api.evervault.com/',
+      relay_url: 'https://relay.evervault.com:8443',
+      ca_host: 'https://ca.evervault.com',
       request_timeout: 30,
       curve: 'prime256v1'
     )
@@ -27,7 +27,7 @@ module Evervault
           request: @request, base_url: base_url, cert: @intercept
         )
       @crypto_client = Evervault::Crypto::Client.new(request_handler: @request_handler, curve: curve)
-      @intercept.setup()
+      @intercept.setup
     end
 
     def encrypt(data, role = nil)
@@ -36,27 +36,26 @@ module Evervault
 
     def decrypt(data)
       unless data.is_a?(String) || data.is_a?(Array) || data.is_a?(Hash)
-        raise Evervault::Errors::EvervaultError.new("data is of invalid type")
+        raise Evervault::Errors::EvervaultError, 'data is of invalid type'
       end
+
       payload = { data: data }
-      response = @request_handler.post("decrypt", payload, true, Evervault::Errors::ErrorMap)
-      response["data"]
+      response = @request_handler.post('decrypt', payload, true, Evervault::Errors::ErrorMap)
+      response['data']
     end
 
     def create_token(action, data, expiry = nil)
       payload = { payload: data, expiry: expiry, action: action }
-      @request_handler.post("client-side-tokens", payload, true, Evervault::Errors::ErrorMap)
+      @request_handler.post('client-side-tokens', payload, true, Evervault::Errors::ErrorMap)
     end
 
     def run(function_name, payload)
       payload = { payload: payload }
       res = @request_handler.post("functions/#{function_name}/runs", payload, true, Evervault::Errors::ErrorMap)
-      
-      if res["status"] == "success"
-        return res
-      else
-        return Evervault::Errors::ErrorMap.raise_function_error_on_failure(res)
-      end
+
+      return res if res['status'] == 'success'
+
+      Evervault::Errors::ErrorMap.raise_function_error_on_failure(res)
     end
 
     def create_run_token(function_name, data = {})

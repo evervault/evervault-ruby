@@ -12,8 +12,8 @@ RSpec.describe Evervault::Client do
     it 'delegates to the crypto client' do
       crypto = instance_double(Evervault::Crypto::Client)
       allow(client).to receive(:crypto_client).and_return(crypto)
-      expect(crypto).to receive(:encrypt).with("Data", "role")
-      client.encrypt("Data", "role")
+      expect(crypto).to receive(:encrypt).with('Data', 'role')
+      client.encrypt('Data', 'role')
     end
   end
 
