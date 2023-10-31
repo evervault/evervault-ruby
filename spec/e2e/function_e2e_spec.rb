@@ -61,6 +61,7 @@ RSpec.describe Evervault do
         sleep 2
 
         function_run_result = run_function_with_token(run_token["token"], function_name, encrypt_result)
+        puts "function_run_result: #{function_run_result}"
         expect(function_run_result["result"]).to eq(expected_response)
       end
     end
