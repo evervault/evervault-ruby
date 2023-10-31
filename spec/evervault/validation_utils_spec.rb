@@ -1,5 +1,3 @@
-require_relative "spec_helper"
-
 RSpec.describe Evervault do
   describe "ValidationUtils" do
     describe "validate_app_uuid_and_api_key" do

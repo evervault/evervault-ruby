@@ -1,6 +1,6 @@
+require_relative "spec_helper"
 require 'faraday'
 require 'json'
-require_relative "spec_helper"
 
 payload = {
   string: 'hello',

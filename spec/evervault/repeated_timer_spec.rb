@@ -1,5 +1,3 @@
-require_relative "spec_helper"
-
 RSpec.describe Evervault do
   describe "RepeatableTimer" do
     describe "initialize" do
