@@ -49,7 +49,7 @@ module Evervault
 
         metadata = generate_metadata(role)
         metadata_offset = [metadata.length].pack("v") # 'v' specifies 16-bit unsigned little-endian
-        payload = metadata_offset + metadata + data_to_encrypt.to_s #.encode("utf-8")
+        payload = metadata_offset + metadata + data_to_encrypt.to_s
 
         encrypted_data = cipher.update(payload.to_s) + cipher.final + cipher.auth_tag
 
@@ -123,7 +123,9 @@ module Evervault
         shared_key = ec.dh_compute_key(team_key_point)
 
         # Perform KDF
-        encoded_ephemeral_key = @p256.encode(decompressed_key: @ephemeral_public_key.to_bn(:uncompressed).to_s(16)).to_der
+        encoded_ephemeral_key = @curve == 'prime256v1' ?
+          @p256.encode(decompressed_key: @ephemeral_public_key.to_bn(:uncompressed).to_s(16)).to_der :
+          @koblitz.encode(decompressed_key: @ephemeral_public_key.to_bn(:uncompressed).to_s(16)).to_der
         hash_input = shared_key + [00, 00, 00, 01].pack('C*') + encoded_ephemeral_key
         hash = OpenSSL::Digest::SHA256.new()
         digest = hash.digest(hash_input)
