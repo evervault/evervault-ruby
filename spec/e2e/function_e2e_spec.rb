@@ -58,6 +58,8 @@ RSpec.describe Evervault do
 
         run_token = Evervault.create_run_token(function_name, encrypt_result)
 
+        sleep 2
+
         function_run_result = run_function_with_token(run_token["token"], function_name, encrypt_result)
         expect(function_run_result["result"]).to eq(expected_response)
       end
