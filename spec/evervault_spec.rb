@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.describe Evervault do
-  let(:public_key) { "Ax1NYOSqswFgsRoLFTac7eOvRu7h3GuLmUPKlHpOqsFA" }
   let(:request) do
     Evervault::Http::Request.new(
       timeout: 30,
@@ -37,10 +36,9 @@ RSpec.describe Evervault do
 
   describe "encrypt" do
     before do
-      allow(request_handler).to receive(:get).with("cages/key").and_return({ "ecdhKey" => public_key, "ecdhP256Key" => public_key })
-      allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request_handler)
-
       mock_valid_cert
+      mock_cages_keys
+      allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request_handler)
     end
 
     it "encrypts strings as ev string type" do
