@@ -29,63 +29,19 @@ RSpec.describe Evervault do
   end
 
   before :each do 
+    mock_valid_cert
+    mock_cages_keys
     Evervault.app_id = "app_test"
     Evervault.api_key = "testing" 
     allow(Time).to receive(:now).and_return(Time.parse('2022-06-06'))
   end
 
   describe "encrypt" do
-    before do
-      mock_valid_cert
-      mock_cages_keys
-      allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request_handler)
-    end
-
-    it "encrypts strings as ev string type" do
-      encrypted_data = Evervault.encrypt(1)
-      expect(is_evervault_string(encrypted_data, "number")).to be true
-    end
-
-    it "encrypts numbers as ev number type" do
-      encrypted_data = Evervault.encrypt(true)
-      expect(is_evervault_string(encrypted_data, "boolean")).to be true
-    end
-
-    it "encrypts booleans as ev boolean type" do
-      encrypted_data = Evervault.encrypt("testing")
-      expect(is_evervault_string(encrypted_data, "string")).to be true
-    end
-
-    it "encrypts arrays" do
-      encrypted_data = Evervault.encrypt(["testing", "encrypting", "array"])
-      expect(encrypted_data.length).to be 3
-      for item in encrypted_data
-        expect(is_evervault_string(item, "string")).to be true
-      end
-    end
-
-    it "encrypts hashes" do
-      test_payload = {
-        "name": "testname",
-        "age": 20,
-        "array": ["team1", 1],
-        "dict": {"subname": "subtestname", "subnumber": 2},
-      }
-      encrypted_data = Evervault.encrypt(test_payload)
-      expect(encrypted_data).to_not equal({"name": "testname"})
-      expect(encrypted_data.key? 'name'.to_sym).to be true
-      expect(encrypted_data["dict".to_sym].class.to_s).to eq "Hash"
-      expect(is_evervault_string(encrypted_data["dict".to_sym]["subnumber".to_sym], "number")).to be true
-    end
-
-    it "throws exception on unsupported type" do
-      class MyTestClass
-        @x = 5
-      end
-      test_instance = MyTestClass.new()
-      list = ["a", 1, test_instance]
-      expect { Evervault.encrypt(test_instance) }.to raise_error(Evervault::Errors::EvervaultError)
-      expect { Evervault.encrypt(list) }.to raise_error(Evervault::Errors::EvervaultError)
+    it "delegates to the evervault client" do
+      client = double("client")
+      allow(Evervault).to receive(:client).and_return(client)
+      expect(client).to receive(:encrypt).with("test")
+      Evervault.encrypt("test")
     end
   end
 
@@ -98,25 +54,9 @@ RSpec.describe Evervault do
     end
   end
 
-  def is_evervault_string(data, type)
-    parts = data.split(":")
-    parts_length = parts.length
-    if parts_length < 6
-        return false
-    elsif type == "string"
-        return parts_length == 6
-    elsif type != "string" && parts_length != 7
-        return false
-    elsif type != parts[2]
-        return false
-    else
-      return true
-    end
-  end
-
   describe "run" do
     before do 
-      allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request)
+      allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request_handler)
       stub_request(:post, "https://api.evervault.com/functions/testing-function/runs").with(
         headers: {
           "Accept"=>"application/json",
