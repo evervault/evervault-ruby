@@ -120,45 +120,11 @@ RSpec.describe Evervault do
   end
 
   describe 'create_run_token' do
-    before do
-      allow(Evervault::Http::RequestHandler).to receive(:new).and_return(request_handler)
-      stub_request(:post, 'https://api.evervault.com/v2/functions/testing-function/run-token').with(
-        headers: {
-          'Accept' => 'application/json',
-          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'Acceptencoding' => 'gzip, deflate',
-          'Api-Key' => 'testing',
-          'Content-Type' => 'application/json',
-          'User-Agent' => "evervault-ruby/#{Evervault::VERSION}"
-        },
-        body: {
-          name: 'testing'
-        }.to_json
-      ).to_return({ status: status, body: response.to_json })
-    end
-
-    context 'success' do
-      let(:response) { 'runtoken123' }
-      let(:status) { 200 }
-
-      it 'makes a post request to the API' do
-        Evervault.create_run_token('testing-function', { name: 'testing' })
-        assert_requested(:post, 'https://api.evervault.com/v2/functions/testing-function/run-token',
-                         body: { name: 'testing' }, times: 1)
-      end
-    end
-
-    context 'failure' do
-      let(:response) { { 'Error' => 'Bad request' } }
-      let(:status) { 400 }
-
-      it 'makes a post request to the API and maps the error' do
-        expect do
-          Evervault.create_run_token('testing-function', { name: 'testing' })
-        end.to raise_error(Evervault::Errors::EvervaultError)
-        assert_requested(:post, 'https://api.evervault.com/v2/functions/testing-function/run-token',
-                         body: { name: 'testing' }, times: 1)
-      end
+    it 'delegates to the evervault client' do
+      client = double('client')
+      allow(Evervault).to receive(:client).and_return(client)
+      expect(client).to receive(:create_run_token).with('test', { foo: 'bar' })
+      Evervault.create_run_token('test', { foo: 'bar' })
     end
   end
 
