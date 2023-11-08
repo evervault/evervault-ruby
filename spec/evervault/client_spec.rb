@@ -37,13 +37,10 @@ RSpec.describe Evervault::Client do
 
   describe '#run' do
     let(:status) { 200 }
+    let(:endpoint) { 'https://api.evervault.com/functions/testing-function/runs' }
 
     before :each do
-      stub_request(:post, 'https://api.evervault.com/functions/testing-function/runs').with(
-        body: {
-          payload: { name: 'testing' }
-        }.to_json
-      ).to_return({ status: status, body: response.to_json })
+      stub_request(:post, endpoint).to_return({ status: status, body: response.to_json })
     end
 
     context 'when the function run succeeds' do
@@ -58,7 +55,7 @@ RSpec.describe Evervault::Client do
       it 'calls the function run API' do
         payload = { name: 'testing' }
         result = client.run('testing-function', payload)
-        assert_requested(:post, 'https://api.evervault.com/functions/testing-function/runs', body: { payload: payload })
+        assert_requested(:post, endpoint, body: { payload: payload })
         expect(result['id']).to eq(response[:id])
         expect(result['status']).to eq('success')
         expect(result['result']['test']).to eq('data')
@@ -77,7 +74,7 @@ RSpec.describe Evervault::Client do
       it 'raises an error' do
         payload = { name: 'testing' }
         expect { client.run('testing-function', payload) }.to raise_error(Evervault::Errors::FunctionRuntimeError)
-        assert_requested(:post, 'https://api.evervault.com/functions/testing-function/runs', body: { payload: payload })
+        assert_requested(:post, endpoint, body: { payload: payload })
       end
     end
 
@@ -94,7 +91,7 @@ RSpec.describe Evervault::Client do
       it 'raises an error' do
         payload = { name: 'testing' }
         expect { client.run('testing-function', payload) }.to raise_error(Evervault::Errors::EvervaultError)
-        assert_requested(:post, 'https://api.evervault.com/functions/testing-function/runs', body: { payload: payload })
+        assert_requested(:post, endpoint, body: { payload: payload })
       end
     end
   end
@@ -102,16 +99,16 @@ RSpec.describe Evervault::Client do
   describe '#create_run_token' do
     let(:status) { 200 }
     let(:response) { 'token' }
+    let(:endpoint) { 'https://api.evervault.com/v2/functions/testing-function/run-token' }
 
     before :each do
-      url = 'https://api.evervault.com/v2/functions/testing-function/run-token'
-      stub_request(:post, url).to_return({ status: status, body: response.to_json })
+      stub_request(:post, endpoint).to_return({ status: status, body: response.to_json })
     end
 
     it 'calls the run token API' do
       payload = { name: 'testing' }
       client.create_run_token('testing-function', payload)
-      assert_requested(:post, 'https://api.evervault.com/v2/functions/testing-function/run-token', body: payload)
+      assert_requested(:post, endpoint, body: payload)
     end
 
     context 'when the API responds with error' do
@@ -127,7 +124,48 @@ RSpec.describe Evervault::Client do
         expect do
           client.create_run_token('testing-function', payload)
         end.to raise_error(Evervault::Errors::EvervaultError)
-        assert_requested(:post, 'https://api.evervault.com/v2/functions/testing-function/run-token', body: payload)
+        assert_requested(:post, endpoint, body: payload)
+      end
+    end
+  end
+
+  describe '#create_token' do
+    let(:status) { 200 }
+    let(:endpoint) { 'https://api.evervault.com/client-side-tokens' }
+    let(:response) do
+      {
+        token: 'token',
+        expiry: 1_691_596_854_000
+      }
+    end
+
+    before :each do
+      stub_request(:post, endpoint).to_return({ status: status, body: response.to_json })
+    end
+
+    it 'calls the client side tokens endpoint' do
+      expiry = Time.parse('2023-12-25 12:00:00 +0000').to_i * 1000
+      client.create_token('api:decrypt', 'testing', expiry)
+      assert_requested(:post, endpoint, body: { action: 'api:decrypt', payload: 'testing', expiry: expiry })
+    end
+
+    context 'when the API responds with error' do
+      let(:status) { 400 }
+      let(:response) do
+        {
+          "status": 400,
+          "code": 'invalid-request',
+          "title": 'InvalidRequest',
+          "detail": 'Bad request!'
+        }
+      end
+
+      it 'raises an error' do
+        expiry = Time.parse('2023-12-25 12:00:00 +0000').to_i * 1000
+        expect do
+          client.create_token('api:decrypt', 'testing', expiry)
+        end.to raise_error(Evervault::Errors::EvervaultError)
+        assert_requested(:post, endpoint, body: { action: 'api:decrypt', payload: 'testing', expiry: expiry })
       end
     end
   end
