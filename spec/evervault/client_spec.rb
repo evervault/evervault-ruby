@@ -34,4 +34,68 @@ RSpec.describe Evervault::Client do
       end
     end
   end
+
+  describe '#run' do
+    let(:status) { 200 }
+
+    before :each do
+      stub_request(:post, 'https://api.evervault.com/functions/testing-function/runs').with(
+        body: {
+          payload: { name: 'testing' }
+        }.to_json
+      ).to_return({ status: status, body: response.to_json })
+    end
+
+    context 'when the function run succeeds' do
+      let(:response) do
+        {
+          "id": 'func_run_b470a269a369',
+          "result": { "test": 'data' },
+          "status": 'success'
+        }
+      end
+
+      it 'calls the function run API' do
+        payload = { name: 'testing' }
+        result = client.run('testing-function', payload)
+        assert_requested(:post, 'https://api.evervault.com/functions/testing-function/runs', body: { payload: payload })
+        expect(result['id']).to eq(response[:id])
+        expect(result['status']).to eq('success')
+        expect(result['result']['test']).to eq('data')
+      end
+    end
+
+    context "when the function run doesn't succeed" do
+      let(:response) do
+        {
+          "error": { "message": 'Uh oh!', "stack": 'Error: Uh oh!...' },
+          "id": 'func_run_e4f1d8d83ec0',
+          "status": 'failure'
+        }
+      end
+
+      it 'raises an error' do
+        payload = { name: 'testing' }
+        expect { client.run('testing-function', payload) }.to raise_error(Evervault::Errors::FunctionRuntimeError)
+        assert_requested(:post, 'https://api.evervault.com/functions/testing-function/runs', body: { payload: payload })
+      end
+    end
+
+    context 'when the API responds with error' do
+      let(:response) do
+        {
+          "status": 400,
+          "code": 'invalid-request',
+          "title": 'InvalidRequest',
+          "detail": 'Bad request!'
+        }
+      end
+
+      it 'raises an error' do
+        payload = { name: 'testing' }
+        expect { client.run('testing-function', payload) }.to raise_error(Evervault::Errors::EvervaultError)
+        assert_requested(:post, 'https://api.evervault.com/functions/testing-function/runs', body: { payload: payload })
+      end
+    end
+  end
 end
