@@ -169,4 +169,37 @@ RSpec.describe Evervault::Client do
       end
     end
   end
+
+  describe '#create_run_token' do
+    let(:status) { 200 }
+    let(:response) { 'token' }
+
+    before :each do
+      url = 'https://api.evervault.com/v2/functions/testing-function/run-token'
+      stub_request(:post, url).to_return({ status: status, body: response.to_json })
+    end
+
+    it 'calls the run token API' do
+      payload = { name: 'testing' }
+      client.create_run_token('testing-function', payload)
+      assert_requested(:post, 'https://api.evervault.com/v2/functions/testing-function/run-token', body: payload)
+    end
+
+    context 'when the API responds with error' do
+      let(:status) { 400 }
+      let(:response) do
+        {
+          "Error": 'Bad request'
+        }
+      end
+
+      it 'raises an error' do
+        payload = { name: 'testing' }
+        expect do
+          client.create_run_token('testing-function', payload)
+        end.to raise_error(Evervault::Errors::EvervaultError)
+        assert_requested(:post, 'https://api.evervault.com/v2/functions/testing-function/run-token', body: payload)
+      end
+    end
+  end
 end
