@@ -82,9 +82,9 @@ module Evervault
         # Binary representation for a fixed string of length 2, followed by `et` (for "encryption timestamp")
         buffer.push(0xA2)
         buffer.push(*"et".bytes)
-        # Binary representation for a 4-byte unsigned integer (uint 32), followed by the epoch time
+        # Binary representation for a 4-byte unsigned integer (uint 32), followed by the epoch time (big-endian)
         buffer.push(0xCE)
-        buffer.push(*[Time.now.to_i].pack(">I").bytes)
+        buffer.push(*[Time.now.to_i].pack("I!>").bytes)
 
         buffer.pack("C*")
       end
