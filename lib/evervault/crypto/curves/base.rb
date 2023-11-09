@@ -15,8 +15,12 @@ module Evervault
       private def buildEncoder(curve_values:)
         a = OpenSSL::ASN1::OctetString.new([curve_values::A].pack('H*'))
         b = OpenSSL::ASN1::OctetString.new([curve_values::B].pack('H*'))
-        seed = OpenSSL::ASN1::BitString.new([curve_values::SEED].pack('H*'))
-        curve = OpenSSL::ASN1::Sequence.new([a, b, seed])
+        if !curve_values::SEED.nil?
+          seed = OpenSSL::ASN1::BitString.new([curve_values::SEED].pack('H*'))
+          curve = OpenSSL::ASN1::Sequence.new([a, b, seed])
+        else
+          curve = OpenSSL::ASN1::Sequence.new([a, b])
+        end
 
         field_type = OpenSSL::ASN1::ObjectId.new("1.2.840.10045.1.1")
         parameters = OpenSSL::ASN1::Integer.new(curve_values::P.to_i(16))

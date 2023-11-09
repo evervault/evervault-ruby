@@ -9,8 +9,8 @@ module Evervault
     attr_accessor :app_id
     attr_accessor :api_key
 
-    def encrypt(data)
-      client.encrypt(data)
+    def encrypt(data, role = nil)
+      client.encrypt(data, role)
     end
 
     def decrypt(data)
