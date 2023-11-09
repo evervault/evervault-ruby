@@ -199,18 +199,18 @@ RSpec.describe Evervault do
         expect(decryptResult).to eq(payload)
       end
 
-      it "should decrypt a true bool with a permitting role" do
-        payload = true
-        encryptResult = client.encrypt(payload, "permit-all")
-        decryptResult = client.decrypt(encryptResult)
-        expect(decryptResult).to eq(payload)
-      end
-      
-      it "should error decrypting a true bool with a denying role" do
-        payload = true
-        encryptResult = client.encrypt(payload, "deny-all")
-        expect{ client.decrypt(encryptResult) }.to raise_error(Evervault::Errors::EvervaultError)
-      end
+    it "should decrypt a false bool with a permitting role" do
+      payload = false
+      encryptResult = Evervault.encrypt(payload, "permit-all")
+      decryptResult = Evervault.decrypt(encryptResult)
+      expect(decryptResult).to eq(payload)
+    end
+    
+    it "should error decrypting a false bool with a denying role" do
+      payload = false
+      encryptResult = Evervault.encrypt(payload, "deny-all")
+      expect{ Evervault.decrypt(encryptResult) }.to raise_error(Evervault::Errors::EvervaultError)
+    end
 
       it "should encrypt a false bool" do
         payload = false
