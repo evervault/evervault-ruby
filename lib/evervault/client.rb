@@ -30,7 +30,7 @@ module Evervault
       @intercept.setup()
     end
 
-    def encrypt(data, role)
+    def encrypt(data, role = nil)
       crypto_client.encrypt(data, role)
     end
 

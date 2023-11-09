@@ -44,8 +44,17 @@ RSpec.describe Evervault do
     it 'delegates to the evervault client' do
       client = double('client')
       allow(Evervault).to receive(:client).and_return(client)
-      expect(client).to receive(:encrypt).with('test')
+      expect(client).to receive(:encrypt).with('test', nil)
       Evervault.encrypt('test')
+    end
+
+    context 'when role is passed' do
+      it 'passes it to the evervault client' do
+        client = double('client')
+        allow(Evervault).to receive(:client).and_return(client)
+        expect(client).to receive(:encrypt).with('test', 'role')
+        Evervault.encrypt('test', 'role')
+      end
     end
   end
 

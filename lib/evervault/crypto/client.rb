@@ -24,7 +24,7 @@ module Evervault
         @team_key = response[key]
       end
 
-      def encrypt(data, role)
+      def encrypt(data, role = nil)
         raise Evervault::Errors::EvervaultError.new(
           "Data is required for encryption"
         ) if data.nil? || (data.instance_of?(String) && data.empty?)
