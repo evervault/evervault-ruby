@@ -103,7 +103,7 @@ RSpec.describe Evervault do
       end
       
       it "should error decrypting a false bool with a denying role" do
-        payload = true
+        payload = false
         encryptResult = client.encrypt(payload, "deny-all")
         expect{ client.decrypt(encryptResult) }.to raise_error(Evervault::Errors::EvervaultError)
       end
@@ -227,7 +227,7 @@ RSpec.describe Evervault do
       end
       
       it "should error decrypting a false bool with a denying role" do
-        payload = true
+        payload = false
         encryptResult = client.encrypt(payload, "deny-all")
         expect{ client.decrypt(encryptResult) }.to raise_error(Evervault::Errors::EvervaultError)
       end
