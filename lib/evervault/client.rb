@@ -7,6 +7,7 @@ require_relative "crypto/client"
 
 module Evervault
   class Client
+    attr_reader :crypto_client
 
     def initialize(
       app_uuid:,
@@ -29,8 +30,8 @@ module Evervault
       @intercept.setup()
     end
 
-    def encrypt(data, role)
-      @crypto_client.encrypt(data, role)
+    def encrypt(data, role = nil)
+      crypto_client.encrypt(data, role)
     end
 
     def decrypt(data)
