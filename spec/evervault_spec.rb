@@ -44,7 +44,7 @@ RSpec.describe Evervault do
     it 'delegates to the evervault client' do
       client = double('client')
       allow(Evervault).to receive(:client).and_return(client)
-      expect(client).to receive(:encrypt).with('test', nil)
+      expect(client).to receive(:encrypt).with('test')
       Evervault.encrypt('test')
     end
 
