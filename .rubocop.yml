@@ -1,2 +1,3 @@
 Metrics/BlockLength:
-  AllowedMethods: ["describe", "context"]
+  Exclude:
+    - "**/*_spec.rb"

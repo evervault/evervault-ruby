@@ -1,32 +1,49 @@
-require_relative "spec_helper"
+# frozen_string_literal: true
 
-RSpec.describe Evervault do
-  describe "E2E Function Tests" do
-    app_uuid = ENV["EVERVAULT_APP_UUID"]
-    api_key = ENV["EVERVAULT_API_KEY"]
-    synthetic_endpoint_url = ENV["EVERVAULT_SYNTHETIC_ENDPOINT_URL"]
-    Evervault.app_id = app_uuid
-    Evervault.api_key = api_key
-      
-    it "should enable outbound relay" do
-      Evervault.enable_outbound_relay()
+require_relative 'spec_helper'
 
-      payload = {"string" => "some_string", "number" => 42, "boolean" => true}
-      encryptResult = Evervault.encrypt(payload)
+# For this test, the sythetic endpoint will respond with true and false values for each field
+# depending on whether the field was encrypted or not.
 
-      url = synthetic_endpoint_url
-      conn = Faraday.new
-      res = conn.post do |req|
-        req.url "#{url}/production?uuid=ruby-sdk-run&mode=outbound"
-        req.headers['Content-Type'] = 'application/json'
-        req.body = payload.to_json
-      end
+RSpec.describe 'Outbound Relay' do
+  before :each do
+    Evervault.app_id = ENV['EVERVAULT_APP_UUID']
+    Evervault.api_key = ENV['EVERVAULT_API_KEY']
+  end
 
-      body = JSON.parse res.body
-
-      expect(body["request"]["string"]).to eq(false)
-      expect(body["request"]["number"]).to eq(false)
-      expect(body["request"]["boolean"]).to eq(false)
+  context 'when outbound is not enabled' do
+    it 'should not decrypt any data' do
+      payload = Evervault.encrypt({ 'string' => 'some_string', 'number' => 42, 'boolean' => true })
+      response = make_request(payload)
+      expect(response['request']['string']).to eq(true)
+      expect(response['request']['number']).to eq(true)
+      expect(response['request']['boolean']).to eq(true)
     end
   end
+
+  context 'when outbound is enabled' do
+    before :each do
+      Evervault.enable_outbound_relay
+    end
+
+    it 'should decrypt any data' do
+      payload = Evervault.encrypt({ 'string' => 'some_string', 'number' => 42, 'boolean' => true })
+      response = make_request(payload)
+      expect(response['request']['string']).to eq(false)
+      expect(response['request']['number']).to eq(false)
+      expect(response['request']['boolean']).to eq(false)
+    end
+  end
+end
+
+def make_request(payload)
+  url = ENV['EVERVAULT_SYNTHETIC_ENDPOINT_URL']
+
+  response = Faraday.new.post do |req|
+    req.url "#{url}/production?uuid=ruby-sdk-run&mode=outbound"
+    req.headers['Content-Type'] = 'application/json'
+    req.body = payload.to_json
+  end
+
+  JSON.parse response.body
 end
