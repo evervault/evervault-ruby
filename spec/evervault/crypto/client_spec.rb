@@ -1,34 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe Evervault::Crypto::Client do
-  let(:request) do
-    Evervault::Http::Request.new(
-      timeout: 30,
-      app_uuid: 'app_test',
-      api_key: 'testing'
-    )
-  end
-
-  let(:intercept) do
-    Evervault::Http::RequestIntercept.new(
-      request: request,
-      ca_host: 'https://ca.evervault.com',
-      api_key: 'testing',
-      base_url: 'https://api.evervault.com/',
-      relay_url: 'https://relay.evervault.com:8443'
-    )
-  end
-
-  let(:request_handler) do
-    Evervault::Http::RequestHandler.new(
-      request: request,
-      base_url: 'https://api.evervault.com/',
-      cert: intercept
-    )
-  end
-
-  let(:curve) { 'secp256k1' }
-  let(:client) { Evervault::Crypto::Client.new(request_handler: request_handler, curve: curve) }
+  let(:config) { Evervault::Config.new(app_id: 'app_test', api_key: 'testing') }
+  let(:request) { Evervault::Http::Request.new(config: config) }
+  let(:intercept) { Evervault::Http::RequestIntercept.new(request: request, config: config) }
+  let(:request_handler) { Evervault::Http::RequestHandler.new(request: request, config: config, cert: intercept) }
+  let(:client) { Evervault::Crypto::Client.new(request_handler: request_handler, config: config) }
 
   describe '#encrypt' do
     before do

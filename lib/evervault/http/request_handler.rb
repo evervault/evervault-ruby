@@ -6,9 +6,11 @@ require_relative "../errors/error_map"
 module Evervault
   module Http
     class RequestHandler
-      def initialize(request:, base_url:, cert:)
+      attr_reader :config
+
+      def initialize(request:, config:, cert:)
         @request = request
-        @base_url = base_url
+        @config = config
         @cert = cert
       end
 
@@ -49,7 +51,7 @@ module Evervault
       end
 
       private def build_url(path)
-        return "#{@base_url}#{path}"
+        return "#{config.base_url}#{path}"
       end
     end
   end
