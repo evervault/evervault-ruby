@@ -3,6 +3,7 @@
 require 'time'
 require_relative 'evervault/version'
 require_relative 'evervault/client'
+require_relative 'evervault/config'
 require_relative 'evervault/errors/errors'
 require_relative 'evervault/utils/validation_utils'
 
@@ -33,6 +34,10 @@ module Evervault
     def create_client_side_decrypt_token(data, expiry = nil)
       expiry = (expiry.to_f * 1000).to_i unless expiry.nil?
       client.create_token('api:decrypt', data, expiry)
+    end
+
+    def configure(...)
+      client.configure(...)
     end
 
     private

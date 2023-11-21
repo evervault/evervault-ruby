@@ -77,13 +77,14 @@ end
 module Evervault
   module Http
     class RequestIntercept
-      def initialize(request:, ca_host:, api_key:, base_url:, relay_url:)
-        NetHTTPOverride.set_api_key(api_key)
-        NetHTTPOverride.set_relay_url(relay_url)
+      attr_reader :config
+
+      def initialize(request:, config:)
+        @config = config
+        NetHTTPOverride.set_api_key(config.api_key)
+        NetHTTPOverride.set_relay_url(config.relay_url)
         
         @request = request
-        @base_url = base_url
-        @ca_host = ca_host
         @expire_date = nil
         @initial_date = nil
       end
@@ -105,7 +106,7 @@ module Evervault
       end
 
       def setup_outbound_relay_config
-        @relay_outbound_config = Evervault::Http::RelayOutboundConfig.new(base_url: @base_url, request: @request)
+        @relay_outbound_config = Evervault::Http::RelayOutboundConfig.new(base_url: config.base_url, request: @request)
         NetHTTPOverride.add_get_decryption_domains_func(-> {
           @relay_outbound_config.get_destination_domains
         })
@@ -122,13 +123,13 @@ module Evervault
         while !ca_content && i < 1
           i += 1
           begin
-            ca_content = @request.execute("get", @ca_host).body
+            ca_content = @request.execute("get", config.ca_host).body
           rescue;
           end
         end
 
         if !ca_content || ca_content == ""
-          raise Evervault::Errors::EvervaultError.new("Unable to install the Evervault root certificate from #{@ca_host}")
+          raise Evervault::Errors::EvervaultError.new("Unable to install the Evervault root certificate from #{config.ca_host}")
         end
 
         cert = OpenSSL::X509::Certificate.new ca_content
