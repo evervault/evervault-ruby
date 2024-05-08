@@ -127,9 +127,11 @@ module Evervault
 
         # Perform KDF
         encoded_ephemeral_key = if config.curve == 'prime256v1'
-                                  @p256.encode(decompressed_key: @ephemeral_public_key.to_bn(:uncompressed).to_s(16)).to_der
+                                  @p256.encode(decompressed_key: @ephemeral_public_key
+                                    .to_bn(:uncompressed).to_s(16)).to_der
                                 else
-                                  @koblitz.encode(decompressed_key: @ephemeral_public_key.to_bn(:uncompressed).to_s(16)).to_der
+                                  @koblitz.encode(decompressed_key: @ephemeral_public_key
+                                    .to_bn(:uncompressed).to_s(16)).to_der
                                 end
         hash_input = shared_key + [0o0, 0o0, 0o0, 0o1].pack('C*') + encoded_ephemeral_key
         hash = OpenSSL::Digest.new('SHA256')

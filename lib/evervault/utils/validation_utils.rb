@@ -22,7 +22,8 @@ module Evervault
         return unless app_uuid_hash != app_uuid_hash_from_api_key
 
         raise Evervault::Errors::EvervaultError,
-              "The API key is not valid for app #{app_uuid}. Make sure to use an API key belonging to the app #{app_uuid}."
+              "The API key is not valid for app #{app_uuid}. Make sure to use an API key belonging to the ap'\
+        'p #{app_uuid}."
       end
     end
   end
