@@ -3,7 +3,6 @@ require 'digest'
 module Evervault
   module Utils
     class ValidationUtils
-
       def self.validate_app_uuid_and_api_key(app_uuid, api_key)
         if app_uuid.nil?
           raise Evervault::Errors::EvervaultError.new(

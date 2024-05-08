@@ -5,7 +5,7 @@ RSpec.describe Evervault do
   let(:config) { Evervault::Config.new(app_id: 'app_test', api_key: 'testing') }
   let(:request) { Evervault::Http::Request.new(config: config) }
 
-  after :each do 
+  after :each do
     Evervault::Http::RelayOutboundConfig.disable_polling()
     Evervault::Http::RelayOutboundConfig.clear_cache()
   end
@@ -25,8 +25,9 @@ RSpec.describe Evervault do
         mock_api_interaction(double_outbound_destinations(), 0.1)
 
         sleep 1
-        
-        expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com", "test-two.destinations.com"])
+
+        expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com",
+                                                                       "test-two.destinations.com"])
       end
 
       it "should update the poll interval based on the server response" do
@@ -40,7 +41,8 @@ RSpec.describe Evervault do
 
         sleep 1
 
-        expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com", "test-two.destinations.com"])
+        expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com",
+                                                                       "test-two.destinations.com"])
       end
 
       it "should not update the poll interval if not specified by the server" do
@@ -50,7 +52,8 @@ RSpec.describe Evervault do
 
         sleep 1.9
 
-        expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com", "test-two.destinations.com"])
+        expect(relay_outbound_config.get_destination_domains()).to eq(["test-one.destinations.com",
+                                                                       "test-two.destinations.com"])
       end
 
       it "should silently ignore exceptions thrown when polling" do
@@ -99,76 +102,79 @@ RSpec.describe Evervault do
 
   private def create_relay_outbound_config()
     Evervault::Http::RelayOutboundConfig.new(
-      base_url: "https://api.evervault.com/", 
+      base_url: "https://api.evervault.com/",
       request: request,
     )
   end
 
   private def mock_api_interaction(response_body, poll_interval = "5")
     stub_request(:get, "https://api.evervault.com/v2/relay-outbound")
-    .with(
-      headers: {
-        'Accept'=>'application/json',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Acceptencoding'=>'gzip, deflate',
-        'Api-Key'=>'testing',
-        'Content-Type'=>'application/json',
-        'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
-      })
-    .to_return(
-      status: 200, 
-      body: response_body.to_json, 
-      headers: {
-        'Content-Type' => 'application/json',
-        'X-Poll-Interval' => "#{poll_interval}",
-      }
-    )
+      .with(
+        headers: {
+          'Accept' => 'application/json',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'Acceptencoding' => 'gzip, deflate',
+          'Api-Key' => 'testing',
+          'Content-Type' => 'application/json',
+          'User-Agent' => "evervault-ruby/#{Evervault::VERSION}"
+        }
+      )
+      .to_return(
+        status: 200,
+        body: response_body.to_json,
+        headers: {
+          'Content-Type' => 'application/json',
+          'X-Poll-Interval' => "#{poll_interval}",
+        }
+      )
   end
 
   private def mock_api_interaction_without_poll_interval(response_body)
     stub_request(:get, "https://api.evervault.com/v2/relay-outbound")
-    .with(
-      headers: {
-        'Accept'=>'application/json',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Acceptencoding'=>'gzip, deflate',
-        'Api-Key'=>'testing',
-        'Content-Type'=>'application/json',
-        'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
-      })
-    .to_return(
-      status: 200, 
-      body: response_body.to_json, 
-      headers: {
-        'Content-Type' => 'application/json',
-      }
-    )
+      .with(
+        headers: {
+          'Accept' => 'application/json',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'Acceptencoding' => 'gzip, deflate',
+          'Api-Key' => 'testing',
+          'Content-Type' => 'application/json',
+          'User-Agent' => "evervault-ruby/#{Evervault::VERSION}"
+        }
+      )
+      .to_return(
+        status: 200,
+        body: response_body.to_json,
+        headers: {
+          'Content-Type' => 'application/json',
+        }
+      )
   end
 
   private def mock_failed_api_interaction()
     stub_request(:get, "https://api.evervault.com/v2/relay-outbound")
-    .with(
-      headers: {
-        'Accept'=>'application/json',
-        'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-        'Acceptencoding'=>'gzip, deflate',
-        'Api-Key'=>'testing',
-        'Content-Type'=>'application/json',
-        'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
-      })
-    .to_return(
-      status: 400, 
-      headers: {
-        'Content-Type' => 'application/json',
-      }
-    )
+      .with(
+        headers: {
+          'Accept' => 'application/json',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'Acceptencoding' => 'gzip, deflate',
+          'Api-Key' => 'testing',
+          'Content-Type' => 'application/json',
+          'User-Agent' => "evervault-ruby/#{Evervault::VERSION}"
+        }
+      )
+      .to_return(
+        status: 400,
+        headers: {
+          'Content-Type' => 'application/json',
+        }
+      )
   end
 
   private def single_outbound_destination()
     {
       "appUuid" => "app_33b88ca7da01",
       "teamUuid" => "2ef8d35ce661",
-      "strictMode"  => true,
+      "strictMode" => true,
       "outboundDestinations" => {
         "test-one.destinations.com" => {
           "id" => 144,
@@ -184,14 +190,14 @@ RSpec.describe Evervault do
           "destinationDomain" => "test-one.destinations.com",
         },
       },
-    } 
+    }
   end
 
   private def double_outbound_destinations()
     {
       "appUuid" => "app_33b88ca7da01",
       "teamUuid" => "2ef8d35ce661",
-      "strictMode"  => true,
+      "strictMode" => true,
       "outboundDestinations" => {
         "test-one.destinations.com" => {
           "id" => 144,
@@ -220,6 +226,6 @@ RSpec.describe Evervault do
           "destinationDomain" => "test-two.destinations.com",
         },
       },
-    } 
+    }
   end
 end

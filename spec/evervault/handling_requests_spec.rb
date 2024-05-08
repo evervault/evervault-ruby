@@ -6,7 +6,7 @@ RSpec.describe Evervault do
   let(:intercept) { Evervault::Http::RequestIntercept.new(request: request, config: config) }
   let(:request_handler) { Evervault::Http::RequestHandler.new(request: request, config: config, cert: intercept) }
   let(:cert) do
-"-----BEGIN CERTIFICATE-----
+    "-----BEGIN CERTIFICATE-----
 MIIDgzCCAmugAwIBAgIUEL9SyDnNVvLXq8opJM2nrLgoFpgwDQYJKoZIhvcNAQEL
 BQAwUTELMAkGA1UEBhMCSUUxEzARBgNVBAgMCkR1YmxpbiBDby4xDzANBgNVBAcM
 BlN3b3JkczEcMBoGA1UECgwTRGVmYXVsdCBDb21wYW55IEx0ZDAeFw0wODEyMjQw
@@ -28,9 +28,9 @@ i7xFTBvY5QrZGK/Y6mEAdGCRoGusOputz1MHn721sIyH5DtCAMXdJ/s94Ki7m557
 qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
 -----END CERTIFICATE-----"
   end
-  before :each do 
-    Evervault.app_id= "app_test"
-    Evervault.api_key = "testing" 
+  before :each do
+    Evervault.app_id = "app_test"
+    Evervault.api_key = "testing"
   end
 
   describe "expired_cert" do
@@ -40,65 +40,69 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
     end
 
     it "is updated by get" do
-      stub_request(:get, "https://api.evervault.com/cages").
-         with(
-           headers: {
-          'Accept'=>'application/json',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'Acceptencoding'=>'gzip, deflate',
-          'Api-Key'=>'testing',
-          'Content-Type'=>'application/json',
-          'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
-           }).
-         to_return(status: 200, body: "{}", headers: {})
+      stub_request(:get, "https://api.evervault.com/cages")
+        .with(
+          headers: {
+            'Accept' => 'application/json',
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Acceptencoding' => 'gzip, deflate',
+            'Api-Key' => 'testing',
+            'Content-Type' => 'application/json',
+            'User-Agent' => "evervault-ruby/#{Evervault::VERSION}"
+          }
+        )
+        .to_return(status: 200, body: "{}", headers: {})
       expect(intercept).to receive(:setup)
       request_handler.get("cages")
     end
 
     it "is updated by post" do
-      stub_request(:post, "https://api.evervault.com/cages").
-         with(
-           headers: {
-          'Accept'=>'application/json',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'Acceptencoding'=>'gzip, deflate',
-          'Api-Key'=>'testing',
-          'Content-Type'=>'application/json',
-          'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
-           }).
-         to_return(status: 200, body: "{}", headers: {})
+      stub_request(:post, "https://api.evervault.com/cages")
+        .with(
+          headers: {
+            'Accept' => 'application/json',
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Acceptencoding' => 'gzip, deflate',
+            'Api-Key' => 'testing',
+            'Content-Type' => 'application/json',
+            'User-Agent' => "evervault-ruby/#{Evervault::VERSION}"
+          }
+        )
+        .to_return(status: 200, body: "{}", headers: {})
       expect(intercept).to receive(:setup)
       request_handler.post("cages", {})
     end
 
     it "is updated by put" do
-      stub_request(:put, "https://api.evervault.com/cages").
-         with(
-           headers: {
-          'Accept'=>'application/json',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'Acceptencoding'=>'gzip, deflate',
-          'Api-Key'=>'testing',
-          'Content-Type'=>'application/json',
-          'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
-           }).
-         to_return(status: 200, body: "{}", headers: {})
+      stub_request(:put, "https://api.evervault.com/cages")
+        .with(
+          headers: {
+            'Accept' => 'application/json',
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Acceptencoding' => 'gzip, deflate',
+            'Api-Key' => 'testing',
+            'Content-Type' => 'application/json',
+            'User-Agent' => "evervault-ruby/#{Evervault::VERSION}"
+          }
+        )
+        .to_return(status: 200, body: "{}", headers: {})
       expect(intercept).to receive(:setup)
       request_handler.put("cages", {})
     end
 
     it "is updated by delete" do
-      stub_request(:delete, "https://api.evervault.com/cages").
-         with(
-           headers: {
-          'Accept'=>'application/json',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'Acceptencoding'=>'gzip, deflate',
-          'Api-Key'=>'testing',
-          'Content-Type'=>'application/json',
-          'User-Agent'=>"evervault-ruby/#{Evervault::VERSION}"
-           }).
-         to_return(status: 200, body: "{}", headers: {})
+      stub_request(:delete, "https://api.evervault.com/cages")
+        .with(
+          headers: {
+            'Accept' => 'application/json',
+            'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+            'Acceptencoding' => 'gzip, deflate',
+            'Api-Key' => 'testing',
+            'Content-Type' => 'application/json',
+            'User-Agent' => "evervault-ruby/#{Evervault::VERSION}"
+          }
+        )
+        .to_return(status: 200, body: "{}", headers: {})
       expect(intercept).to receive(:setup)
       request_handler.delete("cages")
     end

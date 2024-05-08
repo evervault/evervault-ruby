@@ -13,7 +13,7 @@ module Evervault
           @thread = Thread.new do
             loop do
               sleep @interval
-              begin 
+              begin
                 @func.call
               rescue => e
                 # Silently ignore exceptions

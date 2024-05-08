@@ -14,9 +14,9 @@ module Evervault
 
       def execute(method, url, body = nil, basic_auth = false, error_map = Evervault::Errors::LegacyErrorMap)
         resp = faraday(basic_auth).public_send(method, url) do |req, url|
-            req.body = body.nil? || body.empty? ? nil : body.to_json
-            req.headers = build_headers(basic_auth)
-            req.options.timeout = config.request_timeout
+          req.body = body.nil? || body.empty? ? nil : body.to_json
+          req.headers = build_headers(basic_auth)
+          req.options.timeout = config.request_timeout
         end
 
         if resp.status >= 200 && resp.status <= 300
@@ -45,8 +45,8 @@ module Evervault
         }
         if !basic_auth
           headers = headers.merge({
-            "Api-Key": config.api_key,
-          })
+                                    "Api-Key": config.api_key,
+                                  })
         end
         headers
       end

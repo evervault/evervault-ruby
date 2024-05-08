@@ -1,6 +1,6 @@
 require "webmock"
 
-RSpec.describe Evervault do 
+RSpec.describe Evervault do
   describe "NetHTTPOverride" do
     context "should_decrypt" do
       it "returns true if the domain matches the decryption domain" do

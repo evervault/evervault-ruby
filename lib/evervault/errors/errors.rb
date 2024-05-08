@@ -12,7 +12,7 @@ module Evervault
 
     class FunctionRuntimeError < FunctionError
       attr_reader :message, :stack, :id
-    
+
       def initialize(message, stack, id)
         @message = message
         @stack = stack
@@ -20,6 +20,5 @@ module Evervault
         super("#{message}")
       end
     end
-
   end
 end

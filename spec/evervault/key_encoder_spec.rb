@@ -9,7 +9,7 @@ RSpec.describe Evervault do
       ).to_der
 
       expected_der = "MIIBSzCCAQMGByqGSM49AgEwgfcCAQEwLAYHKoZIzj0BAQIhAP////8AAAABAAAAAAAAAAAAAAAA////////////////MFsEIP////8AAAABAAAAAAAAAAAAAAAA///////////////8BCBaxjXYqjqT57PrvVV2mIa8ZR0GsMxTsPY7zjw+J9JgSwMVAMSdNgiG5wSTamZ44ROdJreBn36QBEEEaxfR8uEsQkf4vOblY6RA8ncDfYEt6zOg9KE5RdiYwpZP40Li/hp/m47n60p8D54WK84zV2sxXs7LtkBoN79R9QIhAP////8AAAAA//////////+85vqtpxeehPO5ysL8YyVRAgEBA0IABLdVasBwxDm6kU5uLzui5YIwTcVIUk/8hBSrwHq1qEPssfHXHTpiDmp8CLiVpy1i4iUNJIox2ipdWbpuzWNnJsQ="
-      
+
       expect(Base64.strict_encode64(der_encoded)).to eq(expected_der)
     end
   end

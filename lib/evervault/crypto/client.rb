@@ -31,7 +31,7 @@ module Evervault
         raise Evervault::Errors::EvervaultError.new(
           "Encryption is not supported for #{data.class}"
         ) if !(encryptable_data?(data) || data.instance_of?(Hash) || data.instance_of?(Array))
-          
+
         traverse_and_encrypt(data, role)
       end
 
@@ -54,7 +54,8 @@ module Evervault
 
         ephemeral_key_compressed_string = @ephemeral_public_key.to_octet_string(:compressed)
 
-        format(header_type(data_to_encrypt), Base64.strict_encode64(iv), Base64.strict_encode64(ephemeral_key_compressed_string), Base64.strict_encode64(encrypted_data))
+        format(header_type(data_to_encrypt), Base64.strict_encode64(iv),
+               Base64.strict_encode64(ephemeral_key_compressed_string), Base64.strict_encode64(encrypted_data))
       end
 
       def generate_metadata(role)
@@ -103,6 +104,7 @@ module Evervault
             "Encryption is not supported for #{data.class}"
           )
         end
+
         data
       end
 

@@ -5,6 +5,7 @@ module Evervault
     class LegacyErrorMap
       def self.raise_errors_on_failure(status_code, body, headers)
         return if status_code < 400
+
         case status_code
         when 404
           raise EvervaultError.new("Resource not found")
@@ -26,8 +27,8 @@ module Evervault
           raise EvervaultError.new("Service unavailable")
         else
           raise EvervaultError.new(
-                  self.message_for_unexpected_error_without_type(body)
-                )
+            self.message_for_unexpected_error_without_type(body)
+          )
         end
       end
 

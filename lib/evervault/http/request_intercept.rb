@@ -36,7 +36,7 @@ module NetHTTPOverride
       false
     else
       decryption_domains = @@get_decryption_domains_func.call()
-      decryption_domains.any? { |decryption_domain| 
+      decryption_domains.any? { |decryption_domain|
         if decryption_domain.start_with?("*")
           domain.end_with?(decryption_domain[1..-1])
         else
@@ -83,7 +83,7 @@ module Evervault
         @config = config
         NetHTTPOverride.set_api_key(config.api_key)
         NetHTTPOverride.set_relay_url(config.relay_url)
-        
+
         @request = request
         @expire_date = nil
         @initial_date = nil
@@ -148,4 +148,3 @@ module Evervault
     end
   end
 end
-

@@ -5,7 +5,7 @@ RSpec.describe Evervault do
   let(:request) { Evervault::Http::Request.new(config: config) }
   let(:intercept) { Evervault::Http::RequestIntercept.new(request: request, config: config) }
   let(:expired_cert) do
-"-----BEGIN CERTIFICATE-----
+    "-----BEGIN CERTIFICATE-----
 MIIDgzCCAmugAwIBAgIUEL9SyDnNVvLXq8opJM2nrLgoFpgwDQYJKoZIhvcNAQEL
 BQAwUTELMAkGA1UEBhMCSUUxEzARBgNVBAgMCkR1YmxpbiBDby4xDzANBgNVBAcM
 BlN3b3JkczEcMBoGA1UECgwTRGVmYXVsdCBDb21wYW55IEx0ZDAeFw0wODEyMjQw
@@ -28,9 +28,9 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
 -----END CERTIFICATE-----"
   end
 
-  before :each do 
+  before :each do
     Evervault.app_id = "app_uuid"
-    Evervault.api_key = "testing" 
+    Evervault.api_key = "testing"
   end
 
   describe "test_cert_is_valid" do
@@ -44,17 +44,18 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
 
   describe "test_cert_is_expired" do
     it "detects cert is expired" do
-      stub_request(:get, "https://ca.evervault.com/").
-        with(
+      stub_request(:get, "https://ca.evervault.com/")
+        .with(
           headers: {
-            "Accept"=>"application/json",
-            "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
-            "Acceptencoding"=>"gzip, deflate",
-            "Api-Key"=>"testing",
-            "Content-Type"=>"application/json",
-            "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}"
-          }).
-        to_return({ status: 200, body: expired_cert})
+            "Accept" => "application/json",
+            "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "Acceptencoding" => "gzip, deflate",
+            "Api-Key" => "testing",
+            "Content-Type" => "application/json",
+            "User-Agent" => "evervault-ruby/#{Evervault::VERSION}"
+          }
+        )
+        .to_return({ status: 200, body: expired_cert })
       intercept.setup()
       expect(intercept.is_certificate_expired()).to be true
     end
@@ -62,17 +63,18 @@ qLZdvkgx0KBRnP/JPZ55VgjZ8ipH9+SGxsZeTg9sX6nw+x/Plncz
 
   describe "test_not_available_cert_is_not_expired" do
     it "detects cert is expired" do
-      stub_request(:get, "https://ca.evervault.com/").
-        with(
+      stub_request(:get, "https://ca.evervault.com/")
+        .with(
           headers: {
-            "Accept"=>"application/json",
-            "Accept-Encoding"=>"gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
-            "Acceptencoding"=>"gzip, deflate",
-            "Api-Key"=>"testing",
-            "Content-Type"=>"application/json",
-            "User-Agent"=>"evervault-ruby/#{Evervault::VERSION}"
-          }).
-        to_return({ status: 200, body: ""})
+            "Accept" => "application/json",
+            "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
+            "Acceptencoding" => "gzip, deflate",
+            "Api-Key" => "testing",
+            "Content-Type" => "application/json",
+            "User-Agent" => "evervault-ruby/#{Evervault::VERSION}"
+          }
+        )
+        .to_return({ status: 200, body: "" })
       expect { intercept.setup() }.to raise_error(Evervault::Errors::EvervaultError)
       expect(intercept.is_certificate_expired()).to be false
     end

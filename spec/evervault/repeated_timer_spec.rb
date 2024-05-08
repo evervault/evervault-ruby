@@ -54,7 +54,7 @@ RSpec.describe Evervault do
         timer = Evervault::Threading::RepeatedTimer.new(0.1, -> { counter += 1 })
         timer.update_interval(0.2)
         sleep 1
-        expect(counter).to be >=2
+        expect(counter).to be >= 2
       end
     end
 

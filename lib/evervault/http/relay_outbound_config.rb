@@ -41,7 +41,9 @@ module Evervault
           update_poll_interval(poll_interval.to_f)
         end
         resp_body = JSON.parse(resp.body)
-        @@destination_domains_cache = resp_body["outboundDestinations"].values.map{ |outbound_destination| outbound_destination["destinationDomain"] }
+        @@destination_domains_cache = resp_body["outboundDestinations"].values.map { |outbound_destination|
+          outbound_destination["destinationDomain"]
+        }
       end
 
       private def update_poll_interval(poll_interval)

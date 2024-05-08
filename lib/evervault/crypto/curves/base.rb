@@ -3,7 +3,6 @@ require "openssl"
 module Evervault
   module Crypto
     class CurveBase
-
       def initialize(curve_name:, curve_values:)
         @asn1Encoder = buildEncoder(curve_values: curve_values)
       end
@@ -35,7 +34,10 @@ module Evervault
         algorithm = OpenSSL::ASN1::ObjectId.new("1.2.840.10045.2.1")
         algorithm_identifier = OpenSSL::ASN1::Sequence.new([algorithm, ec_parameters])
 
-        return lambda {|public_key| OpenSSL::ASN1::Sequence.new([algorithm_identifier, OpenSSL::ASN1::BitString.new([public_key].pack('H*'))])}
+        return lambda { |public_key|
+                 OpenSSL::ASN1::Sequence.new([algorithm_identifier,
+                                              OpenSSL::ASN1::BitString.new([public_key].pack('H*'))])
+               }
       end
     end
   end
