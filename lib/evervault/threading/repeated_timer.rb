@@ -9,15 +9,15 @@ module Evervault
       end
 
       def start
-        if !running?
-          @thread = Thread.new do
-            loop do
-              sleep @interval
-              begin
-                @func.call
-              rescue => e
-                # Silently ignore exceptions
-              end
+        return if running?
+
+        @thread = Thread.new do
+          loop do
+            sleep @interval
+            begin
+              @func.call
+            rescue StandardError => e
+              # Silently ignore exceptions
             end
           end
         end

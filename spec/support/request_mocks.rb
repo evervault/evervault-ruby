@@ -38,23 +38,23 @@ module RequestMocks
   CERT
 
   def mock_valid_cert
-    stub_request(:get, "https://ca.evervault.com/").with(
+    stub_request(:get, 'https://ca.evervault.com/').with(
       headers: {
-        "Accept" => "application/json",
-        "Accept-Encoding" => "gzip;q=1.0,deflate;q=0.6,identity;q=0.3",
-        "Acceptencoding" => "gzip, deflate",
-        "Api-Key" => "testing",
-        "Content-Type" => "application/json",
-        "User-Agent" => "evervault-ruby/#{Evervault::VERSION}"
+        'Accept' => 'application/json',
+        'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+        'Acceptencoding' => 'gzip, deflate',
+        'Api-Key' => 'testing',
+        'Content-Type' => 'application/json',
+        'User-Agent' => "evervault-ruby/#{Evervault::VERSION}"
       }
     ).to_return({ status: 200, body: VALID_CERT })
   end
 
-  PUBLIC_KEY = "Ax1NYOSqswFgsRoLFTac7eOvRu7h3GuLmUPKlHpOqsFA"
+  PUBLIC_KEY = 'Ax1NYOSqswFgsRoLFTac7eOvRu7h3GuLmUPKlHpOqsFA'
 
   def mock_cages_keys
     stub_request(:get,
-                 "https://api.evervault.com/cages/key").to_return_json(body: { "ecdhKey": PUBLIC_KEY,
+                 'https://api.evervault.com/cages/key').to_return_json(body: { "ecdhKey": PUBLIC_KEY,
                                                                                "ecdhP256Key": PUBLIC_KEY })
   end
 end
