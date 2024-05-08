@@ -2,13 +2,8 @@ require "webmock"
 require 'json'
 
 RSpec.describe Evervault do
-  let(:request) do
-    Evervault::Http::Request.new(
-      timeout: 30,
-      app_uuid: "app_test",
-      api_key: "testing"
-    )
-  end
+  let(:config) { Evervault::Config.new(app_id: 'app_test', api_key: 'testing') }
+  let(:request) { Evervault::Http::Request.new(config: config) }
 
   after :each do 
     Evervault::Http::RelayOutboundConfig.disable_polling()

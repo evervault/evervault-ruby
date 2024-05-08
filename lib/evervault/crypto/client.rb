@@ -11,16 +11,15 @@ require 'time'
 module Evervault
   module Crypto
     class Client
-      attr_reader :request_handler
-      def initialize(request_handler:, curve:)
-        @curve = curve
+      attr_reader :config
+
+      def initialize(request_handler:, config: ::Evervault::Config.new)
+        @config = config
         @p256 = Evervault::Crypto::Curves::P256.new()
         @koblitz = Evervault::Crypto::Curves::Koblitz.new()
-        @ev_version = base_64_remove_padding(
-            Base64.strict_encode64(EV_VERSION[curve])
-        )
+        @ev_version = base_64_remove_padding(Base64.strict_encode64(EV_VERSION[config.curve]))
         response = request_handler.get("cages/key")
-        key = @curve == 'secp256k1' ? 'ecdhKey' : 'ecdhP256Key'
+        key = config.curve == 'secp256k1' ? 'ecdhKey' : 'ecdhP256Key'
         @team_key = response[key]
       end
 
@@ -113,17 +112,17 @@ module Evervault
       end
 
       private def generate_shared_key()
-        ec = OpenSSL::PKey::EC.generate(@curve)
+        ec = OpenSSL::PKey::EC.generate(config.curve)
         @ephemeral_public_key = ec.public_key
 
         decoded_team_key = OpenSSL::BN.new(Base64.strict_decode64(@team_key), 2)
-        group_for_team_key = OpenSSL::PKey::EC::Group.new(@curve)
+        group_for_team_key = OpenSSL::PKey::EC::Group.new(config.curve)
         team_key_point = OpenSSL::PKey::EC::Point.new(group_for_team_key, decoded_team_key)
 
         shared_key = ec.dh_compute_key(team_key_point)
 
         # Perform KDF
-        encoded_ephemeral_key = @curve == 'prime256v1' ?
+        encoded_ephemeral_key = config.curve == 'prime256v1' ?
           @p256.encode(decompressed_key: @ephemeral_public_key.to_bn(:uncompressed).to_s(16)).to_der :
           @koblitz.encode(decompressed_key: @ephemeral_public_key.to_bn(:uncompressed).to_s(16)).to_der
         hash_input = shared_key + [00, 00, 00, 01].pack('C*') + encoded_ephemeral_key

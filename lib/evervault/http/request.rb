@@ -6,17 +6,17 @@ require_relative "../errors/legacy_error_map"
 module Evervault
   module Http
     class Request
-      def initialize(timeout:, app_uuid:, api_key:)
-        @timeout = timeout
-        @app_uuid = app_uuid
-        @api_key = api_key
+      attr_reader :config
+
+      def initialize(config:)
+        @config = config
       end
 
       def execute(method, url, body = nil, basic_auth = false, error_map = Evervault::Errors::LegacyErrorMap)
         resp = faraday(basic_auth).public_send(method, url) do |req, url|
             req.body = body.nil? || body.empty? ? nil : body.to_json
             req.headers = build_headers(basic_auth)
-            req.options.timeout = @timeout
+            req.options.timeout = config.request_timeout
         end
 
         if resp.status >= 200 && resp.status <= 300
@@ -31,7 +31,7 @@ module Evervault
       def faraday(basic_auth = false)
         Faraday.new do |conn|
           if basic_auth
-            conn.request :authorization, :basic, @app_uuid, @api_key
+            conn.request :authorization, :basic, config.app_id, config.api_key
           end
         end
       end
@@ -45,7 +45,7 @@ module Evervault
         }
         if !basic_auth
           headers = headers.merge({
-            "Api-Key": @api_key,
+            "Api-Key": config.api_key,
           })
         end
         headers

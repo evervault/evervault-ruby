@@ -10,9 +10,14 @@ RSpec.describe 'Encryption' do
       let(:client) do
         Evervault::Client.new(
           app_uuid: ENV['EVERVAULT_APP_UUID'],
-          api_key: ENV['EVERVAULT_API_KEY'],
-          curve: curve
+          api_key: ENV['EVERVAULT_API_KEY']
         )
+      end
+
+      before :each do
+        client.configure do |config|
+          config.curve = curve
+        end
       end
 
       context 'when given a string' do
