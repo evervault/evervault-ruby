@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'base'
 
 # https://neuromancer.sk/std/x962/prime256v1

@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'bundler/setup'
 require 'evervault'
 require 'rspec'
 require 'pry'
 require 'webmock/rspec'
 
-Dir['./spec/support/**/*.rb'].each { |f| require f }
+Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

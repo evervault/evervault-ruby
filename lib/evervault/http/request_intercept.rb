@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faraday'
 require 'json'
 require 'tempfile'
@@ -38,7 +40,7 @@ module NetHTTPOverride
       decryption_domains = @@get_decryption_domains_func.call
       decryption_domains.any? do |decryption_domain|
         if decryption_domain.start_with?('*')
-          domain.end_with?(decryption_domain[1..-1])
+          domain.end_with?(decryption_domain[1..])
         else
           domain == decryption_domain
         end
@@ -125,7 +127,8 @@ module Evervault
         end
 
         if !ca_content || ca_content == ''
-          raise Evervault::Errors::EvervaultError.new("Unable to install the Evervault root certificate from #{config.ca_host}")
+          raise Evervault::Errors::EvervaultError,
+                "Unable to install the Evervault root certificate from #{config.ca_host}"
         end
 
         cert = OpenSSL::X509::Certificate.new ca_content
@@ -136,7 +139,7 @@ module Evervault
       def set_cert_expire_date(cert)
         @expire_date = cert.not_after
         @initial_date = cert.not_before
-      rescue StandardError => e
+      rescue StandardError
         @expire_date = nil
       end
     end

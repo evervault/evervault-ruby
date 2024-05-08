@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RequestMocks
   VALID_CERT = <<~CERT
     -----BEGIN CERTIFICATE-----

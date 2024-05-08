@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'openssl'
 
 module Evervault
@@ -11,7 +13,9 @@ module Evervault
         @asn1Encoder.call(decompressed_key)
       end
 
-      private def buildEncoder(curve_values:)
+      private
+
+      def buildEncoder(curve_values:)
         a = OpenSSL::ASN1::OctetString.new([curve_values::A].pack('H*'))
         b = OpenSSL::ASN1::OctetString.new([curve_values::B].pack('H*'))
         if !curve_values::SEED.nil?

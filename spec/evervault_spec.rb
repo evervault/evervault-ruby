@@ -124,7 +124,9 @@ RSpec.describe Evervault do
     end
   end
 
-  private def mock_relay_outbound_api_interaction
+  private
+
+  def mock_relay_outbound_api_interaction
     stub_request(:get, 'https://api.evervault.com/v2/relay-outbound')
       .with(
         headers: {
@@ -165,7 +167,7 @@ RSpec.describe Evervault do
       )
   end
 
-  private def mock_failed_relay_outbound_api_interaction
+  def mock_failed_relay_outbound_api_interaction
     stub_request(:get, 'https://api.evervault.com/v2/relay-outbound')
       .with(
         headers: {

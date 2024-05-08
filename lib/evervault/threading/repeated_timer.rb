@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Evervault
   module Threading
     class RepeatedTimer
@@ -16,7 +18,7 @@ module Evervault
             sleep @interval
             begin
               @func.call
-            rescue StandardError => e
+            rescue StandardError
               # Silently ignore exceptions
             end
           end

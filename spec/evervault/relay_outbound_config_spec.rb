@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'webmock'
 require 'json'
 
@@ -100,14 +102,16 @@ RSpec.describe Evervault do
     end
   end
 
-  private def create_relay_outbound_config
+  private
+
+  def create_relay_outbound_config
     Evervault::Http::RelayOutboundConfig.new(
       base_url: 'https://api.evervault.com/',
       request: request
     )
   end
 
-  private def mock_api_interaction(response_body, poll_interval = '5')
+  def mock_api_interaction(response_body, poll_interval = '5')
     stub_request(:get, 'https://api.evervault.com/v2/relay-outbound')
       .with(
         headers: {
@@ -124,12 +128,12 @@ RSpec.describe Evervault do
         body: response_body.to_json,
         headers: {
           'Content-Type' => 'application/json',
-          'X-Poll-Interval' => "#{poll_interval}"
+          'X-Poll-Interval' => poll_interval.to_s
         }
       )
   end
 
-  private def mock_api_interaction_without_poll_interval(response_body)
+  def mock_api_interaction_without_poll_interval(response_body)
     stub_request(:get, 'https://api.evervault.com/v2/relay-outbound')
       .with(
         headers: {
@@ -150,7 +154,7 @@ RSpec.describe Evervault do
       )
   end
 
-  private def mock_failed_api_interaction
+  def mock_failed_api_interaction
     stub_request(:get, 'https://api.evervault.com/v2/relay-outbound')
       .with(
         headers: {
@@ -170,7 +174,7 @@ RSpec.describe Evervault do
       )
   end
 
-  private def single_outbound_destination
+  def single_outbound_destination
     {
       'appUuid' => 'app_33b88ca7da01',
       'teamUuid' => '2ef8d35ce661',
@@ -193,7 +197,7 @@ RSpec.describe Evervault do
     }
   end
 
-  private def double_outbound_destinations
+  def double_outbound_destinations
     {
       'appUuid' => 'app_33b88ca7da01',
       'teamUuid' => '2ef8d35ce661',

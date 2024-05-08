@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Evervault do
   describe 'RepeatableTimer' do
     describe 'initialize' do

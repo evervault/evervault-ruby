@@ -8,8 +8,8 @@ payload = {
   string: 'hello',
   integer: 1,
   float: 1.5,
-  true: true,
-  false: false,
+  true => true,
+  false => false,
   array: ['hello', 1, 1.5, true, false],
   obj: {
     hello: 'world'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Evervault
   module Http
     class RelayOutboundConfig
@@ -32,7 +34,9 @@ module Evervault
         @@destination_domains_cache = nil
       end
 
-      private def get_relay_outbound_config
+      private
+
+      def get_relay_outbound_config
         resp = @request.execute(:get, "#{@base_url}#{RELAY_OUTBOUND_CONFIG_API_ENDPOINT}")
         poll_interval = resp.headers['x-poll-interval']
         update_poll_interval(poll_interval.to_f) unless poll_interval.nil?
@@ -42,7 +46,7 @@ module Evervault
         end
       end
 
-      private def update_poll_interval(poll_interval)
+      def update_poll_interval(poll_interval)
         @@poll_interval = poll_interval
         return if @@timer.nil?
 

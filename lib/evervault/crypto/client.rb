@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../errors/errors'
 require_relative 'curves/p256'
 require_relative 'curves/koblitz'
@@ -25,41 +27,14 @@ module Evervault
 
       def encrypt(data, role = nil)
         if data.nil? || (data.instance_of?(String) && data.empty?)
-          raise Evervault::Errors::EvervaultError.new(
-            'Data is required for encryption'
-          )
+          raise Evervault::Errors::EvervaultError, 'Data is required for encryption'
         end
 
         unless encryptable_data?(data) || data.instance_of?(Hash) || data.instance_of?(Array)
-          raise Evervault::Errors::EvervaultError.new(
-            "Encryption is not supported for #{data.class}"
-          )
+          raise Evervault::Errors::EvervaultError, "Encryption is not supported for #{data.class}"
         end
 
         traverse_and_encrypt(data, role)
-      end
-
-      private def encrypt_string(data_to_encrypt, role)
-        cipher = OpenSSL::Cipher.new('aes-256-gcm').encrypt
-
-        shared_key = generate_shared_key
-        cipher.key = shared_key
-
-        iv = cipher.random_iv
-        cipher.iv = iv
-
-        cipher.auth_data = Base64.strict_decode64(@team_key)
-
-        metadata = generate_metadata(role)
-        metadata_offset = [metadata.length].pack('v') # 'v' specifies 16-bit unsigned little-endian
-        payload = metadata_offset + metadata + data_to_encrypt.to_s
-
-        encrypted_data = cipher.update(payload.to_s) + cipher.final + cipher.auth_tag
-
-        ephemeral_key_compressed_string = @ephemeral_public_key.to_octet_string(:compressed)
-
-        format(header_type(data_to_encrypt), Base64.strict_encode64(iv),
-               Base64.strict_encode64(ephemeral_key_compressed_string), Base64.strict_encode64(encrypted_data))
       end
 
       def generate_metadata(role)
@@ -93,7 +68,32 @@ module Evervault
         buffer.pack('C*')
       end
 
-      private def traverse_and_encrypt(data, role)
+      private
+
+      def encrypt_string(data_to_encrypt, role)
+        cipher = OpenSSL::Cipher.new('aes-256-gcm').encrypt
+
+        shared_key = generate_shared_key
+        cipher.key = shared_key
+
+        iv = cipher.random_iv
+        cipher.iv = iv
+
+        cipher.auth_data = Base64.strict_decode64(@team_key)
+
+        metadata = generate_metadata(role)
+        metadata_offset = [metadata.length].pack('v') # 'v' specifies 16-bit unsigned little-endian
+        payload = metadata_offset + metadata + data_to_encrypt.to_s
+
+        encrypted_data = cipher.update(payload.to_s) + cipher.final + cipher.auth_tag
+
+        ephemeral_key_compressed_string = @ephemeral_public_key.to_octet_string(:compressed)
+
+        format(header_type(data_to_encrypt), Base64.strict_encode64(iv),
+               Base64.strict_encode64(ephemeral_key_compressed_string), Base64.strict_encode64(encrypted_data))
+      end
+
+      def traverse_and_encrypt(data, role)
         if encryptable_data?(data)
           return encrypt_string(data, role)
         elsif data.instance_of?(Hash)
@@ -104,20 +104,18 @@ module Evervault
           encrypted_data = data.map { |value| traverse_and_encrypt(value, role) }
           return encrypted_data
         else
-          raise Evervault::Errors::EvervaultError.new(
-            "Encryption is not supported for #{data.class}"
-          )
+          raise Evervault::Errors::EvervaultError, "Encryption is not supported for #{data.class}"
         end
 
         data
       end
 
-      private def encryptable_data?(data)
+      def encryptable_data?(data)
         data.instance_of?(String) || [true, false].include?(data) ||
-        data.instance_of?(Integer) || data.instance_of?(Float)
+          data.instance_of?(Integer) || data.instance_of?(Float)
       end
 
-      private def generate_shared_key
+      def generate_shared_key
         ec = OpenSSL::PKey::EC.generate(config.curve)
         @ephemeral_public_key = ec.public_key
 
@@ -138,19 +136,19 @@ module Evervault
         hash.digest(hash_input)
       end
 
-      private def format(datatype, iv, team_key, encrypted_data)
+      def format(datatype, iv, team_key, encrypted_data)
         "ev:#{@ev_version}#{
-          datatype != 'string' ? ':' + datatype : ''
+          datatype != 'string' ? ":#{datatype}" : ''
         }:#{base_64_remove_padding(iv)}:#{base_64_remove_padding(
           team_key
         )}:#{base_64_remove_padding(encrypted_data)}:$"
       end
 
-      private def base_64_remove_padding(str)
+      def base_64_remove_padding(str)
         str.gsub(/={1,2}$/, '')
       end
 
-      private def header_type(data)
+      def header_type(data)
         if data.instance_of?(Array)
           'Array'
         elsif [true, false].include?(data)

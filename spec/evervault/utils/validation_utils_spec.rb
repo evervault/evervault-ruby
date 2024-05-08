@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Evervault::Utils::ValidationUtils do
   describe '#validate_app_uuid_and_api_key' do
     it 'should raise an error if the app_uuid is nil' do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faraday'
 require 'json'
 require_relative '../version'
@@ -38,11 +40,13 @@ module Evervault
         parse_json_body(resp.body) unless resp.body.empty?
       end
 
-      private def parse_json_body(body)
+      private
+
+      def parse_json_body(body)
         JSON.parse(body)
       end
 
-      private def build_url(path)
+      def build_url(path)
         "#{config.base_url}#{path}"
       end
     end

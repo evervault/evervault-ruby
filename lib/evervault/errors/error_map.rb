@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'errors'
 
 module Evervault
@@ -8,20 +10,21 @@ module Evervault
         code = parsed_body['code']
         detail = parsed_body['detail']
 
-        if code == 'functions/request-timeout'
-          raise FunctionTimeoutError.new(detail)
-        elsif code == 'functions/function-not-ready'
-          raise FunctionNotReadyError.new(detail)
-        elsif code == 'functions/forbidden-ip'
-          raise ForbiddenIPError.new(detail)
+        case code
+        when 'functions/request-timeout'
+          raise FunctionTimeoutError, detail
+        when 'functions/function-not-ready'
+          raise FunctionNotReadyError, detail
+        when 'functions/forbidden-ip'
+          raise ForbiddenIPError, detail
         else
-          raise EvervaultError.new(detail)
+          raise EvervaultError, detail
         end
       end
 
       def self.raise_function_error_on_failure(body)
         error = body['error']
-        raise EvervaultError.new('An unexpected error occurred. Please contact Evervault support') unless error
+        raise EvervaultError, 'An unexpected error occurred. Please contact Evervault support' unless error
 
         message = error['message']
         stack = error['stack']

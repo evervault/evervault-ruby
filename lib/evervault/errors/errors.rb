@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Evervault
   module Errors
     class EvervaultError < StandardError; end
@@ -17,7 +19,7 @@ module Evervault
         @message = message
         @stack = stack
         @id = id
-        super("#{message}")
+        super(message.to_s)
       end
     end
   end
