@@ -24,7 +24,7 @@ RSpec.describe 'Outbound Relay' do
   context 'when outbound is enabled' do
     before :each do
       Evervault.enable_outbound_relay
-    en
+    end
 
     it 'should decrypt any data' do
       payload = Evervault.encrypt({ 'string' => 'some_string', 'number' => 42, 'boolean' => true })
