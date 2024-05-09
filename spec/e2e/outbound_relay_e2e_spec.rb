@@ -24,7 +24,7 @@ RSpec.describe 'Outbound Relay' do
   context 'when outbound is enabled' do
     before :each do
       Evervault.enable_outbound_relay
-    end
+    en
 
     it 'should decrypt any data' do
       payload = Evervault.encrypt({ 'string' => 'some_string', 'number' => 42, 'boolean' => true })
@@ -40,7 +40,7 @@ def make_request(payload)
   url = ENV['EVERVAULT_SYNTHETIC_ENDPOINT_URL']
 
   response = Faraday.new.post do |req|
-    req.url "#{url}/production?uuid=ruby-sdk-run&mode=outbound"
+    req.url "#{url}/production/outbound?uuid=ruby-sdk-run&mode=outbound"
     req.headers['Content-Type'] = 'application/json'
     req.body = payload.to_json
   end
