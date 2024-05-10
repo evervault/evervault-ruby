@@ -81,7 +81,8 @@ module Evervault
     end
 
     def configure_via_options(**options)
-      warn '[DEPRECATION] configuration via Evervault::Client.new arguments is deprecated. Pass a block or use the `.configure` instead.'
+      warn '[DEPRECATION] configuration via Evervault::Client.new arguments is deprecated. Pass a block or use the'\
+      '`.configure` instead.'
 
       options.each do |key, value|
         config.send("#{key}=", value)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Evervault
   module Errors
     class EvervaultError < StandardError; end
@@ -12,14 +14,13 @@ module Evervault
 
     class FunctionRuntimeError < FunctionError
       attr_reader :message, :stack, :id
-    
+
       def initialize(message, stack, id)
         @message = message
         @stack = stack
         @id = id
-        super("#{message}")
+        super(message.to_s)
       end
     end
-
   end
 end

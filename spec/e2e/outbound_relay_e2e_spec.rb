@@ -40,7 +40,7 @@ def make_request(payload)
   url = ENV['EVERVAULT_SYNTHETIC_ENDPOINT_URL']
 
   response = Faraday.new.post do |req|
-    req.url "#{url}/production?uuid=ruby-sdk-run&mode=outbound"
+    req.url "#{url}/production/outbound?uuid=ruby-sdk-run&mode=outbound"
     req.headers['Content-Type'] = 'application/json'
     req.body = payload.to_json
   end

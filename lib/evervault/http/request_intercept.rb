@@ -1,10 +1,12 @@
-require "faraday"
-require "json"
-require "tempfile"
-require "openssl"
+# frozen_string_literal: true
+
+require 'faraday'
+require 'json'
+require 'tempfile'
+require 'openssl'
 require 'net/http'
-require_relative "../version"
-require_relative "../errors/errors"
+require_relative '../version'
+require_relative '../errors/errors'
 
 module NetHTTPOverride
   @@api_key = nil
@@ -18,7 +20,7 @@ module NetHTTPOverride
   end
 
   def self.set_relay_url(value)
-    relay_address_and_port = value.gsub(/(^\w+:|^)\/\//, '').split(":")
+    relay_address_and_port = value.gsub(%r{(^\w+:|^)//}, '').split(':')
     @@relay_url = relay_address_and_port[0]
     @@relay_port = relay_address_and_port[1]
   end
@@ -35,14 +37,14 @@ module NetHTTPOverride
     if @@get_decryption_domains_func.nil?
       false
     else
-      decryption_domains = @@get_decryption_domains_func.call()
-      decryption_domains.any? { |decryption_domain| 
-        if decryption_domain.start_with?("*")
-          domain.end_with?(decryption_domain[1..-1])
+      decryption_domains = @@get_decryption_domains_func.call
+      decryption_domains.any? do |decryption_domain|
+        if decryption_domain.start_with?('*')
+          domain.end_with?(decryption_domain[1..])
         else
           domain == decryption_domain
         end
-      }
+      end
     end
   end
 
@@ -59,9 +61,7 @@ module NetHTTPOverride
 
   def request_with_intercept(req, body = nil, &block)
     should_decrypt = NetHTTPOverride.should_decrypt(@address)
-    if should_decrypt
-      req["Proxy-Authorization"] = @@api_key
-    end
+    req['Proxy-Authorization'] = @@api_key if should_decrypt
     request_without_intercept(req, body, &block)
   end
 end
@@ -83,53 +83,52 @@ module Evervault
         @config = config
         NetHTTPOverride.set_api_key(config.api_key)
         NetHTTPOverride.set_relay_url(config.relay_url)
-        
+
         @request = request
         @expire_date = nil
         @initial_date = nil
       end
 
-      def is_certificate_expired()
+      def is_certificate_expired
         if @expire_date
           now = Time.now
-          if now > @expire_date || now < @initial_date
-            return true
-          end
+          return true if now > @expire_date || now < @initial_date
         end
-        return false
+        false
       end
 
       def setup_decryption_domains(decryption_domains)
-        NetHTTPOverride.add_get_decryption_domains_func(-> {
+        NetHTTPOverride.add_get_decryption_domains_func(lambda {
           decryption_domains
         })
       end
 
       def setup_outbound_relay_config
         @relay_outbound_config = Evervault::Http::RelayOutboundConfig.new(base_url: config.base_url, request: @request)
-        NetHTTPOverride.add_get_decryption_domains_func(-> {
+        NetHTTPOverride.add_get_decryption_domains_func(lambda {
           @relay_outbound_config.get_destination_domains
         })
       end
 
       def setup
-        get_cert()
+        get_cert
       end
 
-      def get_cert()
+      def get_cert
         ca_content = nil
         i = 0
 
         while !ca_content && i < 1
           i += 1
           begin
-            ca_content = @request.execute("get", config.ca_host).body
-          rescue;
+            ca_content = @request.execute('get', config.ca_host).body
+          rescue StandardError
           end
         end
 
-        if !ca_content || ca_content == ""
-          raise Evervault::Errors::EvervaultError.new("Unable to install the Evervault root certificate from #{config.ca_host}")
+        if !ca_content || ca_content == ''
+          raise Evervault::Errors::EvervaultError,
+                "Unable to install the Evervault root certificate from #{config.ca_host}"
         end
 
         cert = OpenSSL::X509::Certificate.new ca_content
@@ -138,14 +137,11 @@ module Evervault
       end
 
       def set_cert_expire_date(cert)
-        begin
-          @expire_date = cert.not_after
-          @initial_date = cert.not_before
-        rescue => exception
-          @expire_date = nil
-        end
+        @expire_date = cert.not_after
+        @initial_date = cert.not_before
+      rescue StandardError
+        @expire_date = nil
       end
     end
   end
 end
-

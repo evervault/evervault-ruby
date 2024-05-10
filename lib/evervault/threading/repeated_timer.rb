@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Evervault
   module Threading
     class RepeatedTimer
@@ -9,15 +11,15 @@ module Evervault
       end
 
       def start
-        if !running?
-          @thread = Thread.new do
-            loop do
-              sleep @interval
-              begin 
-                @func.call
-              rescue => e
-                # Silently ignore exceptions
-              end
+        return if running?
+
+        @thread = Thread.new do
+          loop do
+            sleep @interval
+            begin
+              @func.call
+            rescue StandardError
+              # Silently ignore exceptions
             end
           end
         end
