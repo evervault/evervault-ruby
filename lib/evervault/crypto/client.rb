@@ -19,7 +19,7 @@ module Evervault
         @config = config
         @p256 = Evervault::Crypto::Curves::P256.new
         @koblitz = Evervault::Crypto::Curves::Koblitz.new
-        @ev_version = base_64_remove_padding(Base64.strict_encode64(EV_VERSION[config.curve]))
+        @ev_version = EV_VERSION[config.curve]
         response = request_handler.get('cages/key')
         key = config.curve == 'secp256k1' ? 'ecdhKey' : 'ecdhP256Key'
         @team_key = response[key]
@@ -70,6 +70,70 @@ module Evervault
 
       private
 
+      def create_v2_aad(data_type, ephemeral_public_key_bytes, app_public_key_bytes)
+        data_type_number = case data_type
+                           when 'number' then 1
+                           when 'boolean' then 2
+                           else 0 # Default to String
+                           end
+
+        version_number = case @ev_version
+                         when 'S0lS' then 0
+                         when 'QkTC' then 1
+                         end
+
+        raise 'This encryption version does not have a version number for AAD' if version_number.nil?
+
+        config_byte_size = 1
+        total_size = config_byte_size + ephemeral_public_key_bytes.bytesize + app_public_key_bytes.bytesize
+        aad = "\x00" * total_size # Create a binary string of zeros
+
+        # Set the configuration byte
+        b = 0x00 | (data_type_number << 4) | version_number
+        aad.setbyte(0, b)
+
+        # Copy ephemeral public key bytes into aad
+        aad[config_byte_size, ephemeral_public_key_bytes.bytesize] = ephemeral_public_key_bytes
+
+        # Copy application public key bytes into aad
+        start_index = config_byte_size + ephemeral_public_key_bytes.bytesize
+        aad[start_index, app_public_key_bytes.bytesize] = app_public_key_bytes
+
+        aad
+      end
+
+      def encryptable_data?(data)
+        data.instance_of?(String) || [true, false].include?(data) ||
+          data.instance_of?(Integer) || data.instance_of?(Float)
+      end
+
+      def generate_shared_key
+        ec = OpenSSL::PKey::EC.generate(@config.curve)
+        @ephemeral_public_key = ec.public_key
+
+        decoded_team_key = OpenSSL::BN.new(Base64.strict_decode64(@team_key), 2)
+        group_for_team_key = OpenSSL::PKey::EC::Group.new(config.curve)
+        team_key_point = OpenSSL::PKey::EC::Point.new(group_for_team_key, decoded_team_key)
+
+        shared_key = ec.dh_compute_key(team_key_point)
+
+        # Perform KDF
+        encoded_ephemeral_key = if config.curve == 'prime256v1'
+                                  @p256.encode(decompressed_key: @ephemeral_public_key
+                                    .to_bn(:uncompressed).to_s(16)).to_der
+                                else
+                                  @koblitz.encode(decompressed_key: @ephemeral_public_key
+                                    .to_bn(:uncompressed).to_s(16)).to_der
+                                end
+        hash_input = shared_key + [0o0, 0o0, 0o0, 0o1].pack('C*') + encoded_ephemeral_key
+        hash = OpenSSL::Digest.new('SHA256')
+        hash.digest(hash_input)
+      end
+
+      def base_64_remove_padding(str)
+        str.gsub(/={1,2}$/, '')
+      end
+
       def encrypt_string(data_to_encrypt, role)
         cipher = OpenSSL::Cipher.new('aes-256-gcm').encrypt
 
@@ -79,7 +143,9 @@ module Evervault
         iv = cipher.random_iv
         cipher.iv = iv
 
-        cipher.auth_data = Base64.strict_decode64(@team_key)
+        header_type = header_type(data_to_encrypt)
+        cipher.auth_data = create_v2_aad(header_type, @ephemeral_public_key.to_octet_string(:compressed),
+                                         Base64.decode64(@team_key))
 
         metadata = generate_metadata(role)
         metadata_offset = [metadata.length].pack('v') # 'v' specifies 16-bit unsigned little-endian
@@ -110,34 +176,6 @@ module Evervault
         data
       end
 
-      def encryptable_data?(data)
-        data.instance_of?(String) || [true, false].include?(data) ||
-          data.instance_of?(Integer) || data.instance_of?(Float)
-      end
-
-      def generate_shared_key
-        ec = OpenSSL::PKey::EC.generate(config.curve)
-        @ephemeral_public_key = ec.public_key
-
-        decoded_team_key = OpenSSL::BN.new(Base64.strict_decode64(@team_key), 2)
-        group_for_team_key = OpenSSL::PKey::EC::Group.new(config.curve)
-        team_key_point = OpenSSL::PKey::EC::Point.new(group_for_team_key, decoded_team_key)
-
-        shared_key = ec.dh_compute_key(team_key_point)
-
-        # Perform KDF
-        encoded_ephemeral_key = if config.curve == 'prime256v1'
-                                  @p256.encode(decompressed_key: @ephemeral_public_key
-                                    .to_bn(:uncompressed).to_s(16)).to_der
-                                else
-                                  @koblitz.encode(decompressed_key: @ephemeral_public_key
-                                    .to_bn(:uncompressed).to_s(16)).to_der
-                                end
-        hash_input = shared_key + [0o0, 0o0, 0o0, 0o1].pack('C*') + encoded_ephemeral_key
-        hash = OpenSSL::Digest.new('SHA256')
-        hash.digest(hash_input)
-      end
-
       def format(datatype, iv, team_key, encrypted_data)
         "ev:#{@ev_version}#{
           datatype != 'string' ? ":#{datatype}" : ''
@@ -146,17 +184,9 @@ module Evervault
         )}:#{base_64_remove_padding(encrypted_data)}:$"
       end
 
-      def base_64_remove_padding(str)
-        str.gsub(/={1,2}$/, '')
-      end
-
       def header_type(data)
-        if data.instance_of?(Array)
-          'Array'
-        elsif [true, false].include?(data)
+        if [true, false].include?(data)
           'boolean'
-        elsif data.instance_of?(Hash)
-          'object'
         elsif data.instance_of?(Float) || data.instance_of?(Integer)
           'number'
         elsif data.instance_of?(String)
