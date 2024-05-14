@@ -1,5 +1,21 @@
 # evervault-ruby
 
+## 3.0.1
+
+### Patch Changes
+
+- c0e039d: tidy up string encryption
+- 17f3dab: Improved API for configuring the Evervault::Client.
+
+  Previously there was no way to set the curve used for encryption. This can now
+  be configured via the .configure method.
+
+  ```
+  Evervault.configure do |config|
+    config.curve = "secp256k1"
+  end
+  ```
+
 ## 3.0.0
 
 ### Major Changes
