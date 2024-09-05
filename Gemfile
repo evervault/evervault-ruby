@@ -8,7 +8,7 @@ gemspec
 gem 'faraday'
 gem 'gem-release'
 gem 'pry'
-gem 'rake', '~> 12.0'
+gem 'rake', '~> 13.2'
 gem 'rexml'
 gem 'rspec', '~> 3.0'
 gem 'rubocop', require: false
