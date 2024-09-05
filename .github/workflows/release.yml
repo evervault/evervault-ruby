@@ -1,12 +1,11 @@
 name: Release
-
 on:
   push:
     branches:
-      - "master"
-
+      - master
+      - main
 jobs:
-  run-tests:
+  release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -14,19 +13,14 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GH_TOKEN }}
-
       - name: Get tags
         run: git fetch --tags origin
-
       - name: Install Node Dependencies
-        run: |
-          npm install
-
+        run: npm install
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
-    
+          ruby-version: 3.0
       - name: Create Release Pull Request
         id: changesets
         uses: changesets/action@v1
@@ -36,7 +30,6 @@ jobs:
           version: npm run version
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-    
       - name: Create new release
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
@@ -62,4 +55,4 @@ jobs:
             echo "No tag attached to HEAD. No new release needed."
           fi
         env:
-          RUBYGEMS_API_KEY: ${{secrets.RUBYGEMS_API_KEY}}
+          RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
