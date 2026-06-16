@@ -37,7 +37,7 @@ module Evervault
 
       def message_for_unexpected_error_without_type(error_details)
         if error_details.nil?
-          return(
+          return (
             'An unexpected error occurred without message or status code. Please contact Evervault support'
           )
         end
