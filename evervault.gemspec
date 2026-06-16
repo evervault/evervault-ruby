@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/evervault/evervault-ruby'
 
+  spec.add_dependency 'base64'
   spec.add_dependency 'faraday', ['>= 2.0', '< 3.0']
 
   # Specify which files should be added to the gem when it is released.
