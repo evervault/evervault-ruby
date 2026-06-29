@@ -1,5 +1,15 @@
 # evervault-ruby
 
+## 4.0.0
+
+### Major Changes
+
+- 08bb9aa: Update to support current versions of Ruby, minimum 3.3.0
+
+### Minor Changes
+
+- 08bb9aa: Add nix support
+
 ## 3.0.1
 
 ### Patch Changes
