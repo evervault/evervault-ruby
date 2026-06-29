@@ -7,12 +7,14 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN }}
       - name: Get tags
         run: git fetch --tags origin
       - name: Install Node Dependencies
@@ -29,7 +31,7 @@ jobs:
           commit: 'Release new version'
           version: npm run version
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create new release
         if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
@@ -37,7 +39,7 @@ jobs:
           COMMIT_TAG=$(git tag --points-at HEAD)
           if [ -n "$COMMIT_TAG" ]; then
             echo "A tag is attached to HEAD. Creating a new release..."
-            echo "${{ secrets.GH_TOKEN }}" | gh auth login --with-token
+            echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
             CHANGELOG=$(awk '
               BEGIN { recording=0; }
               /^## / {
