@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - main
+      - main
 jobs:
   release:
     runs-on: ubuntu-latest
