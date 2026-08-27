@@ -9,3 +9,8 @@ updates:
     directory: '/'
     schedule:
       interval: monthly
+  # npm
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: monthly
