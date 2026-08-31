@@ -17,6 +17,10 @@ jobs:
           fetch-depth: 0
       - name: Get tags
         run: git fetch --tags origin
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
       - name: Install Node Dependencies
         run: npm install
       - name: Setup Ruby
@@ -25,17 +29,16 @@ jobs:
           ruby-version: 3.0
       - name: Create Release Pull Request
         id: changesets
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          title: 'New Release'
-          commit: 'Release new version'
-          version: npm run version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pr-title: 'New Release'
+          commit-message: 'Release new version'
+          version-script: npm run version
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create new release
-        if: steps.changesets.outputs.hasChangesets == 'false'
+        if: steps.changesets.outputs.has-changesets == 'false'
         run: |
-          npx changeset tag && git push origin --tags
+          npx changeset git-tag && git push origin --tags
           COMMIT_TAG=$(git tag --points-at HEAD)
           if [ -n "$COMMIT_TAG" ]; then
             echo "A tag is attached to HEAD. Creating a new release..."
